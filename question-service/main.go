@@ -6,9 +6,12 @@ import (
 )
 
 func main() {
+	router := http.NewServeMux()
+	router.HandleFunc("/", basicHandler)
+
 	server := &http.Server{
 		Addr:    ":3001",
-		Handler: http.HandlerFunc(basicHandler),
+		Handler: router,
 	}
 
 	err := server.ListenAndServe()
