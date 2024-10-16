@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+
+	"github.com/amagana8/trivia-games/middleware"
 )
 
 type App struct {
@@ -21,7 +23,7 @@ func New(addr string) *App {
 func (a *App) Run(ctx context.Context) error {
 	server := &http.Server{
 		Addr:    a.addr,
-		Handler: loadRoutes(),
+		Handler: middleware.Logger(loadRoutes()),
 	}
 
 	err := server.ListenAndServe()
