@@ -19,11 +19,9 @@ func New(addr string) *App {
 }
 
 func (a *App) Run(ctx context.Context) error {
-	router := http.NewServeMux()
-
 	server := &http.Server{
 		Addr:    a.addr,
-		Handler: router,
+		Handler: loadRoutes(),
 	}
 
 	err := server.ListenAndServe()
