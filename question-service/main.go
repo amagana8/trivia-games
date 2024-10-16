@@ -1,25 +1,17 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"net/http"
+
+	"github.com/amagana8/trivia-games/application"
 )
 
 func main() {
-	router := http.NewServeMux()
-	router.HandleFunc("/", basicHandler)
+	app := application.New(":3001")
 
-	server := &http.Server{
-		Addr:    ":3001",
-		Handler: router,
-	}
-
-	err := server.ListenAndServe()
+	err := app.Run(context.TODO())
 	if err != nil {
-		fmt.Println("failed to listen to server", err)
+		fmt.Println("failed to start app:", err)
 	}
-}
-
-func basicHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello World"))
 }
