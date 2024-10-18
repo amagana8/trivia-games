@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/amagana8/trivia-games/middleware"
+	"github.com/amagana8/trivia-games/question-service/middleware"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

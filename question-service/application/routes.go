@@ -3,7 +3,7 @@ package application
 import (
 	"net/http"
 
-	"github.com/amagana8/trivia-games/handler"
+	"github.com/amagana8/trivia-games/question-service/handler"
 )
 
 func loadRoutes() *http.ServeMux {

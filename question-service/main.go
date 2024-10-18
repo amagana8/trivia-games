@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/amagana8/trivia-games/application"
+	"github.com/amagana8/trivia-games/question-service/application"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
