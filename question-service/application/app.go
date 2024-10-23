@@ -12,14 +12,16 @@ import (
 )
 
 type App struct {
-	addr string
-	db   *mongo.Client
+	addr   string
+	db     *mongo.Client
+	router http.Handler
 }
 
 func New(addr string, dbClient *mongo.Client) *App {
 	app := &App{
-		addr: addr,
-		db:   dbClient,
+		addr:   addr,
+		db:     dbClient,
+		router: middleware.Logger(loadRoutes()),
 	}
 
 	return app
@@ -28,7 +30,7 @@ func New(addr string, dbClient *mongo.Client) *App {
 func (a *App) Run(ctx context.Context) error {
 	server := &http.Server{
 		Addr:    a.addr,
-		Handler: middleware.Logger(loadRoutes()),
+		Handler: a.router,
 	}
 
 	// deferring so I don't have to repeat this in every return case
