@@ -9,15 +9,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type MongoRepo struct {
+type QuestionModel struct {
 	Collection *mongo.Collection
 }
 
-func (m *MongoRepo) Insert(ctx context.Context, question model.Question) (*mongo.InsertOneResult, error) {
+func (m *QuestionModel) Insert(ctx context.Context, question model.Question) (*mongo.InsertOneResult, error) {
 	return m.Collection.InsertOne(ctx, question)
 }
 
-func (m *MongoRepo) FindById(ctx context.Context, id string) (*model.Question, error) {
+func (m *QuestionModel) FindById(ctx context.Context, id string) (*model.Question, error) {
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func (m *MongoRepo) FindById(ctx context.Context, id string) (*model.Question, e
 	return &question, nil
 }
 
-func (m *MongoRepo) FindAll(ctx context.Context) ([]model.Question, error) {
+func (m *QuestionModel) FindAll(ctx context.Context) ([]model.Question, error) {
 	questions := []model.Question{}
 	questionCursor, err := m.Collection.Find(ctx, bson.M{})
 	if err != nil {
@@ -47,11 +47,11 @@ func (m *MongoRepo) FindAll(ctx context.Context) ([]model.Question, error) {
 	return questions, nil
 }
 
-func (m *MongoRepo) UpdateByID(ctx context.Context, question model.Question) (*mongo.UpdateResult, error) {
+func (m *QuestionModel) UpdateByID(ctx context.Context, question model.Question) (*mongo.UpdateResult, error) {
 	return m.Collection.UpdateByID(ctx, question.ID, question)
 }
 
-func (m *MongoRepo) DeleteById(ctx context.Context, id string) (*mongo.DeleteResult, error) {
+func (m *QuestionModel) DeleteById(ctx context.Context, id string) (*mongo.DeleteResult, error) {
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err

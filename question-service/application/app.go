@@ -7,22 +7,25 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/amagana8/trivia-games/question-service/middleware"
+	"github.com/amagana8/trivia-games/question-service/repository"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type App struct {
-	addr   string
-	db     *mongo.Client
-	router http.Handler
+	addr      string
+	router    http.Handler
+	db        *mongo.Client
+	questions *repository.QuestionModel
 }
 
-func New(addr string, dbClient *mongo.Client) *App {
+func New(addr string, dbClient *mongo.Client, questions *repository.QuestionModel) *App {
 	app := &App{
-		addr:   addr,
-		db:     dbClient,
-		router: middleware.Logger(loadRoutes()),
+		addr:      addr,
+		db:        dbClient,
+		questions: questions,
 	}
+
+	app.loadRoutes()
 
 	return app
 }

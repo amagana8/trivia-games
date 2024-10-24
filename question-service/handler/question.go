@@ -3,9 +3,13 @@ package handler
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/amagana8/trivia-games/question-service/repository"
 )
 
-type Question struct{}
+type Question struct {
+	Repo *repository.QuestionModel
+}
 
 func (q *Question) Create(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Create a question")
