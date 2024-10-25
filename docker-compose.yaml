@@ -1,4 +1,11 @@
 services:
+  question-service:
+    build:
+      context: ./question-service
+    ports:
+      - 3001:3001
+    depends_on:
+      - mongodb
   mongodb:
     image: mongodb/mongodb-community-server:8.0.1-ubuntu2204
     ports:
