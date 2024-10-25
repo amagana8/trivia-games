@@ -1,4 +1,4 @@
-package handler
+package question
 
 import (
 	"encoding/json"
@@ -7,17 +7,16 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/amagana8/trivia-games/question-service/model"
-	"github.com/amagana8/trivia-games/question-service/repository"
+	"github.com/amagana8/trivia-games/question-service/pkg/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Question struct {
-	Repo *repository.QuestionModel
+type Handler struct {
+	Repo *Repository
 }
 
-func (q *Question) Create(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		AuthorID string `json:"authorId"`
 		Query    string `json:"query"`
@@ -46,7 +45,7 @@ func (q *Question) Create(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt: &now,
 	}
 
-	insertResult, err := q.Repo.Insert(r.Context(), question)
+	insertResult, err := h.Repo.Insert(r.Context(), question)
 	if err != nil {
 		fmt.Println("failed to insert:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -66,8 +65,8 @@ func (q *Question) Create(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
-func (q *Question) GetAll(w http.ResponseWriter, r *http.Request) {
-	questions, err := q.Repo.FindAll(r.Context())
+func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
+	questions, err := h.Repo.FindAll(r.Context())
 	if err != nil {
 		fmt.Println("failed to find all:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -86,10 +85,10 @@ func (q *Question) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
-func (q *Question) GetById(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetById(w http.ResponseWriter, r *http.Request) {
 	idParam := r.PathValue("id")
 
-	question, err := q.Repo.FindById(r.Context(), idParam)
+	question, err := h.Repo.FindById(r.Context(), idParam)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -111,7 +110,7 @@ func (q *Question) GetById(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
-func (q *Question) UpdateById(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) UpdateById(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		Query  string `json:"query"`
 		Answer string `json:"answer"`
@@ -140,7 +139,7 @@ func (q *Question) UpdateById(w http.ResponseWriter, r *http.Request) {
 		updates["answer"] = body.Answer
 	}
 
-	question, err := q.Repo.UpdateByID(r.Context(), idParam, updates)
+	question, err := h.Repo.UpdateByID(r.Context(), idParam, updates)
 	if err != nil {
 		fmt.Println("failed to insert:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -159,10 +158,10 @@ func (q *Question) UpdateById(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
-func (q *Question) DeleteById(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) DeleteById(w http.ResponseWriter, r *http.Request) {
 	idParam := r.PathValue("id")
 
-	deleteResult, err := q.Repo.DeleteById(r.Context(), idParam)
+	deleteResult, err := h.Repo.DeleteById(r.Context(), idParam)
 	if err != nil {
 		fmt.Println("failed to delete:", err)
 		w.WriteHeader(http.StatusInternalServerError)

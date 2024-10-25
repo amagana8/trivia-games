@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/amagana8/trivia-games/question-service/repository"
+	"github.com/amagana8/trivia-games/question-service/cmd/question"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -15,10 +15,10 @@ type App struct {
 	addr      string
 	router    http.Handler
 	db        *mongo.Client
-	questions *repository.QuestionModel
+	questions *question.Repository
 }
 
-func New(addr string, dbClient *mongo.Client, questions *repository.QuestionModel) *App {
+func New(addr string, dbClient *mongo.Client, questions *question.Repository) *App {
 	app := &App{
 		addr:      addr,
 		db:        dbClient,

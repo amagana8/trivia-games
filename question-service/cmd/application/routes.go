@@ -3,9 +3,8 @@ package application
 import (
 	"net/http"
 
-	"github.com/amagana8/trivia-games/question-service/handler"
-	"github.com/amagana8/trivia-games/question-service/middleware"
-	"github.com/amagana8/trivia-games/question-service/repository"
+	"github.com/amagana8/trivia-games/question-service/cmd/middleware"
+	"github.com/amagana8/trivia-games/question-service/cmd/question"
 )
 
 func (a *App) loadRoutes() {
@@ -20,9 +19,9 @@ func (a *App) loadRoutes() {
 	a.router = middleware.Logger(router)
 }
 
-func loadQuestionRoutes(questionsRepo *repository.QuestionModel) *http.ServeMux {
+func loadQuestionRoutes(questionsRepo *question.Repository) *http.ServeMux {
 	questionRouter := http.NewServeMux()
-	questionHandler := &handler.Question{
+	questionHandler := &question.Handler{
 		Repo: questionsRepo,
 	}
 
