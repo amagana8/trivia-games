@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type QuestionModel struct {
@@ -47,8 +48,22 @@ func (m *QuestionModel) FindAll(ctx context.Context) ([]model.Question, error) {
 	return questions, nil
 }
 
-func (m *QuestionModel) UpdateByID(ctx context.Context, question model.Question) (*mongo.UpdateResult, error) {
-	return m.Collection.UpdateByID(ctx, question.ID, question)
+func (m *QuestionModel) UpdateByID(ctx context.Context, id string, updates map[string]interface{}) (*model.Question, error) {
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	after := options.After
+	opts := &options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+	}
+	question := model.Question{}
+	err = m.Collection.FindOneAndUpdate(ctx, bson.M{"_id": objectId}, bson.M{"$set": updates}, opts).Decode(&question)
+	if err != nil {
+		return nil, err
+	}
+	return &question, nil
 }
 
 func (m *QuestionModel) DeleteById(ctx context.Context, id string) (*mongo.DeleteResult, error) {

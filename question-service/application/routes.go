@@ -15,7 +15,7 @@ func (a *App) loadRoutes() {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	router.Handle("/question", loadQuestionRoutes(a.questions))
+	router.Handle("/question/", http.StripPrefix("/question", loadQuestionRoutes(a.questions)))
 
 	a.router = middleware.Logger(router)
 }
