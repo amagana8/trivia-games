@@ -1,9 +1,16 @@
 services:
   question-service:
-    build:
-      context: ./question-service
+    image: golang:1.23.2
+    command: ["go", "run", "./backend/cmd/question-service"]
     ports:
       - 3001:3001
+    depends_on:
+      - mongodb
+  game-service:
+    image: golang:1.23.2
+    command: ["go", "run", "./backend/cmd/game-service"]
+    ports:
+      - 3002:3002
     depends_on:
       - mongodb
   mongodb:

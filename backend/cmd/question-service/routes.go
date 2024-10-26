@@ -1,22 +1,22 @@
-package application
+package main
 
 import (
 	"net/http"
 
-	"github.com/amagana8/trivia-games/question-service/cmd/middleware"
-	"github.com/amagana8/trivia-games/question-service/cmd/question"
+	"github.com/amagana8/trivia-games/backend/cmd/question-service/question"
+	"github.com/amagana8/trivia-games/backend/pkg/middleware"
 )
 
-func (a *App) loadRoutes() {
+func CreateRouter(questionRepo *question.Repository) http.Handler {
 	router := http.NewServeMux()
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	router.Handle("/question/", http.StripPrefix("/question", loadQuestionRoutes(a.questions)))
+	router.Handle("/question/", http.StripPrefix("/question", loadQuestionRoutes(questionRepo)))
 
-	a.router = middleware.Logger(router)
+	return middleware.Logger(router)
 }
 
 func loadQuestionRoutes(questionsRepo *question.Repository) *http.ServeMux {

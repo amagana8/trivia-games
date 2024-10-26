@@ -1,4 +1,4 @@
-module github.com/amagana8/trivia-games/question-service
+module github.com/amagana8/trivia-games/backend
 
 go 1.23.2
 

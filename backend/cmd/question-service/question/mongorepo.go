@@ -3,7 +3,7 @@ package question
 import (
 	"context"
 
-	"github.com/amagana8/trivia-games/question-service/pkg/model"
+	"github.com/amagana8/trivia-games/backend/pkg/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -14,8 +14,13 @@ type Repository struct {
 	Collection *mongo.Collection
 }
 
-func (r *Repository) Insert(ctx context.Context, question model.Question) (*mongo.InsertOneResult, error) {
-	return r.Collection.InsertOne(ctx, question)
+func (r *Repository) Insert(ctx context.Context, question model.Question) (*primitive.ObjectID, error) {
+	insertResult, err := r.Collection.InsertOne(ctx, question)
+	if err != nil {
+		return nil, err
+	}
+	id := insertResult.InsertedID.(primitive.ObjectID)
+	return &id, nil
 }
 
 func (r *Repository) FindById(ctx context.Context, id string) (*model.Question, error) {

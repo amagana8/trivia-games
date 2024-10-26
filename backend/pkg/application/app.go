@@ -7,25 +7,21 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/amagana8/trivia-games/question-service/cmd/question"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type App struct {
-	addr      string
-	router    http.Handler
-	db        *mongo.Client
-	questions *question.Repository
+	addr   string
+	router http.Handler
+	db     *mongo.Client
 }
 
-func New(addr string, dbClient *mongo.Client, questions *question.Repository) *App {
+func New(addr string, dbClient *mongo.Client, router http.Handler) *App {
 	app := &App{
-		addr:      addr,
-		db:        dbClient,
-		questions: questions,
+		addr:   addr,
+		db:     dbClient,
+		router: router,
 	}
-
-	app.loadRoutes()
 
 	return app
 }

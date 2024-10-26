@@ -1,4 +1,4 @@
-package question
+package gridGame
 
 import (
 	"encoding/json"
@@ -7,8 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/amagana8/trivia-games/question-service/pkg/model"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/amagana8/trivia-games/backend/pkg/model"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -18,9 +17,7 @@ type Handler struct {
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var body struct {
-		AuthorID string `json:"authorId"`
-		Query    string `json:"query"`
-		Answer   string `json:"answer"`
+		Game []model.Column `json:"game"`
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&body)
@@ -29,31 +26,23 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authorId, err := primitive.ObjectIDFromHex(body.AuthorID)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
 	now := time.Now().UTC()
 
-	question := model.Question{
-		AuthorID:  authorId,
-		Query:     body.Query,
-		Answer:    body.Answer,
+	gridGame := model.GridGame{
+		Game:      body.Game,
 		CreatedAt: &now,
 		UpdatedAt: &now,
 	}
 
-	insertResult, err := h.Repo.Insert(r.Context(), question)
+	id, err := h.Repo.Insert(r.Context(), gridGame)
 	if err != nil {
 		fmt.Println("failed to insert:", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	question.ID = insertResult.InsertedID.(primitive.ObjectID)
+	gridGame.Id = *id
 
-	res, err := json.Marshal(question)
+	res, err := json.Marshal(gridGame)
 	if err != nil {
 		fmt.Println("failed to marshal:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -66,14 +55,14 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
-	questions, err := h.Repo.FindAll(r.Context())
+	games, err := h.Repo.FindAll(r.Context())
 	if err != nil {
 		fmt.Println("failed to find all:", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	res, err := json.Marshal(questions)
+	res, err := json.Marshal(games)
 	if err != nil {
 		fmt.Println("failed to marshal:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -88,7 +77,7 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetById(w http.ResponseWriter, r *http.Request) {
 	idParam := r.PathValue("id")
 
-	question, err := h.Repo.FindById(r.Context(), idParam)
+	game, err := h.Repo.FindById(r.Context(), idParam)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -98,7 +87,7 @@ func (h *Handler) GetById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := json.Marshal(question)
+	res, err := json.Marshal(game)
 	if err != nil {
 		fmt.Println("failed to marshal:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -112,8 +101,7 @@ func (h *Handler) GetById(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) UpdateById(w http.ResponseWriter, r *http.Request) {
 	var body struct {
-		Query  string `json:"query"`
-		Answer string `json:"answer"`
+		Game []model.Column `json:"game"`
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&body)
@@ -121,7 +109,6 @@ func (h *Handler) UpdateById(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	fmt.Println(body.Query)
 
 	idParam := r.PathValue("id")
 
@@ -131,22 +118,18 @@ func (h *Handler) UpdateById(w http.ResponseWriter, r *http.Request) {
 		"updatedAt": now,
 	}
 
-	if body.Query != "" {
-		updates["query"] = body.Query
+	if len(body.Game) != 0 {
+		updates["game"] = body.Game
 	}
 
-	if body.Answer != "" {
-		updates["answer"] = body.Answer
-	}
-
-	question, err := h.Repo.UpdateByID(r.Context(), idParam, updates)
+	gridGame, err := h.Repo.UpdateByID(r.Context(), idParam, updates)
 	if err != nil {
 		fmt.Println("failed to insert:", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	res, err := json.Marshal(question)
+	res, err := json.Marshal(gridGame)
 	if err != nil {
 		fmt.Println("failed to marshal:", err)
 		w.WriteHeader(http.StatusInternalServerError)
