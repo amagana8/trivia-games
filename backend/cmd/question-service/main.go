@@ -6,11 +6,14 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"time"
 
+	"github.com/amagana8/trivia-games/backend/cmd/question-service/pb"
 	"github.com/amagana8/trivia-games/backend/cmd/question-service/question"
 	"github.com/amagana8/trivia-games/backend/pkg/application"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -18,7 +21,7 @@ func main() {
 	mongoDatabase := flag.String("mongoDatabase", "triviaGames", "Database name")
 	serverPort := flag.String("serverPort", ":3001", "HTTP server network port")
 
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(*mongoURI))
@@ -28,10 +31,15 @@ func main() {
 
 	questionRepository := question.NewRepository(client.Database(*mongoDatabase).Collection("questions"))
 	questionService := question.NewService(questionRepository)
-	questionHandler := question.NewHandler(questionService)
-	router := CreateRouter(questionHandler)
+	questionServer := question.NewServer(questionService)
 
-	app := application.New(*serverPort, client, router)
+	server := grpc.NewServer()
+	pb.RegisterQuestionServiceServer(server, questionServer)
+
+	app := application.New(*serverPort, client, server)
+
+	ctx, cancel = signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
 
 	err = app.Run(ctx)
 	if err != nil {

@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package question;
+
+option go_package = "./pb";
+
+service QuestionService {
+    rpc CreateQuestion(CreateQuestionRequest) returns (Question);
+    rpc GetQuestion(QuestionId) returns (Question);
+    rpc GetAllQuestions(GetAllQuestionsRequest) returns (GetAllQuestionsResponse);
+    rpc UpdateQuestion(Question) returns (Question);
+    rpc DeleteQuestion(QuestionId) returns (DeleteQuestionResponse);
+}
+
+message CreateQuestionRequest {
+    string authorId = 1;
+    string query = 2;
+    string answer = 3; 
+}
+
+message Question {
+    string id = 1;
+    string authorId = 2;
+    string query = 3;
+    string answer = 4;
+    string createdAt = 5;
+    string updatedAt = 6;
+}
+
+message QuestionId {
+    string id = 1;
+}
+
+message GetAllQuestionsRequest {}
+
+message GetAllQuestionsResponse {
+    repeated Question questions = 1;
+}
+
+message DeleteQuestionResponse {}
