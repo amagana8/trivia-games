@@ -5,20 +5,24 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
-	"github.com/amagana8/trivia-games/backend/pkg/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Handler struct {
-	Repo *Repository
+	Service *Service
+}
+
+func NewHandler(service *Service) *Handler {
+	return &Handler{
+		Service: service,
+	}
 }
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var body struct {
-		AuthorID string `json:"authorId"`
+		AuthorId string `json:"authorId"`
 		Query    string `json:"query"`
 		Answer   string `json:"answer"`
 	}
@@ -29,29 +33,14 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authorId, err := primitive.ObjectIDFromHex(body.AuthorID)
-	if err != nil {
+	question, err := h.Service.CreateQuestion(r.Context(), body.AuthorId, body.Query, body.Answer)
+	if errors.Is(err, primitive.ErrInvalidHex) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
-	}
-
-	now := time.Now().UTC()
-
-	question := model.Question{
-		AuthorID:  authorId,
-		Query:     body.Query,
-		Answer:    body.Answer,
-		CreatedAt: &now,
-		UpdatedAt: &now,
-	}
-
-	id, err := h.Repo.Insert(r.Context(), question)
-	if err != nil {
-		fmt.Println("failed to insert:", err)
+	} else if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	question.ID = *id
 
 	res, err := json.Marshal(question)
 	if err != nil {
@@ -66,9 +55,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
-	questions, err := h.Repo.FindAll(r.Context())
+	questions, err := h.Service.GetAllQuestions(r.Context())
 	if err != nil {
-		fmt.Println("failed to find all:", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -88,12 +76,11 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetById(w http.ResponseWriter, r *http.Request) {
 	idParam := r.PathValue("id")
 
-	question, err := h.Repo.FindById(r.Context(), idParam)
+	question, err := h.Service.GetQuestionById(r.Context(), idParam)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	} else if err != nil {
-		fmt.Println("failed to find by id:", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -124,23 +111,8 @@ func (h *Handler) UpdateById(w http.ResponseWriter, r *http.Request) {
 
 	idParam := r.PathValue("id")
 
-	now := time.Now().UTC()
-
-	updates := map[string]interface{}{
-		"updatedAt": now,
-	}
-
-	if body.Query != "" {
-		updates["query"] = body.Query
-	}
-
-	if body.Answer != "" {
-		updates["answer"] = body.Answer
-	}
-
-	question, err := h.Repo.UpdateByID(r.Context(), idParam, updates)
+	question, err := h.Service.UpdateQuestionById(r.Context(), idParam, body.Query, body.Answer)
 	if err != nil {
-		fmt.Println("failed to insert:", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -160,15 +132,13 @@ func (h *Handler) UpdateById(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) DeleteById(w http.ResponseWriter, r *http.Request) {
 	idParam := r.PathValue("id")
 
-	deleteResult, err := h.Repo.DeleteById(r.Context(), idParam)
-	if err != nil {
+	err := h.Service.DeleteQuestionById(r.Context(), idParam)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	} else if err != nil {
 		fmt.Println("failed to delete:", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	if deleteResult.DeletedCount == 0 {
-		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 

@@ -7,23 +7,20 @@ import (
 	"github.com/amagana8/trivia-games/backend/pkg/middleware"
 )
 
-func CreateRouter(questionRepo *question.Repository) http.Handler {
+func CreateRouter(questionHandler *question.Handler) http.Handler {
 	router := http.NewServeMux()
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	router.Handle("/question/", http.StripPrefix("/question", loadQuestionRoutes(questionRepo)))
+	router.Handle("/question/", http.StripPrefix("/question", loadQuestionRoutes(questionHandler)))
 
 	return middleware.Logger(router)
 }
 
-func loadQuestionRoutes(questionsRepo *question.Repository) *http.ServeMux {
+func loadQuestionRoutes(questionHandler *question.Handler) *http.ServeMux {
 	questionRouter := http.NewServeMux()
-	questionHandler := &question.Handler{
-		Repo: questionsRepo,
-	}
 
 	questionRouter.HandleFunc("POST /", questionHandler.Create)
 	questionRouter.HandleFunc("GET /", questionHandler.GetAll)

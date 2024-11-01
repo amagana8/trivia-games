@@ -26,11 +26,10 @@ func main() {
 		fmt.Println("failed to connect to mongodb: %w", err)
 	}
 
-	gamesRepo := &gridGame.Repository{
-		Collection: client.Database(*mongoDatabase).Collection("games"),
-	}
-
-	router := CreateRouter(gamesRepo)
+	gridGameRepository := gridGame.NewRepository(client.Database(*mongoDatabase).Collection("games"))
+	gridGameService := gridGame.NewService(gridGameRepository)
+	gridGameHandler := gridGame.NewHandler(gridGameService)
+	router := CreateRouter(gridGameHandler)
 
 	app := application.New(*serverPort, client, router)
 

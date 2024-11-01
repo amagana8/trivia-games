@@ -7,29 +7,26 @@ import (
 	"github.com/amagana8/trivia-games/backend/pkg/middleware"
 )
 
-func CreateRouter(gamesRepo *gridGame.Repository) http.Handler {
+func CreateRouter(gridGameHandler *gridGame.Handler) http.Handler {
 	router := http.NewServeMux()
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	router.Handle("/gridGame/", http.StripPrefix("/gridGame", loadGridGameRoutes(gamesRepo)))
+	router.Handle("/gridGame/", http.StripPrefix("/gridGame", loadGridGameRoutes(gridGameHandler)))
 
 	return middleware.Logger(router)
 }
 
-func loadGridGameRoutes(gamesRepo *gridGame.Repository) *http.ServeMux {
+func loadGridGameRoutes(gridGameHandler *gridGame.Handler) *http.ServeMux {
 	gridGameRouter := http.NewServeMux()
-	girdGameHandler := &gridGame.Handler{
-		Repo: gamesRepo,
-	}
 
-	gridGameRouter.HandleFunc("POST /", girdGameHandler.Create)
-	gridGameRouter.HandleFunc("GET /", girdGameHandler.GetAll)
-	gridGameRouter.HandleFunc("GET /{id}", girdGameHandler.GetById)
-	gridGameRouter.HandleFunc("PUT /{id}", girdGameHandler.UpdateById)
-	gridGameRouter.HandleFunc("DELETE /{id}", girdGameHandler.DeleteById)
+	gridGameRouter.HandleFunc("POST /", gridGameHandler.Create)
+	gridGameRouter.HandleFunc("GET /", gridGameHandler.GetAll)
+	gridGameRouter.HandleFunc("GET /{id}", gridGameHandler.GetById)
+	gridGameRouter.HandleFunc("PUT /{id}", gridGameHandler.UpdateById)
+	gridGameRouter.HandleFunc("DELETE /{id}", gridGameHandler.DeleteById)
 
 	return gridGameRouter
 }

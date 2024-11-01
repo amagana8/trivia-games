@@ -14,6 +14,12 @@ type Repository struct {
 	Collection *mongo.Collection
 }
 
+func NewRepository(collection *mongo.Collection) *Repository {
+	return &Repository{
+		Collection: collection,
+	}
+}
+
 func (r *Repository) Insert(ctx context.Context, gridGame model.GridGame) (*primitive.ObjectID, error) {
 	insertResult, err := r.Collection.InsertOne(ctx, gridGame)
 	if err != nil {

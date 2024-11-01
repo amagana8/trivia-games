@@ -26,10 +26,10 @@ func main() {
 		fmt.Println("failed to connect to mongodb: %w", err)
 	}
 
-	questionRepo := &question.Repository{
-		Collection: client.Database(*mongoDatabase).Collection("questions"),
-	}
-	router := CreateRouter(questionRepo)
+	questionRepository := question.NewRepository(client.Database(*mongoDatabase).Collection("questions"))
+	questionService := question.NewService(questionRepository)
+	questionHandler := question.NewHandler(questionService)
+	router := CreateRouter(questionHandler)
 
 	app := application.New(*serverPort, client, router)
 
