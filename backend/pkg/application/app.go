@@ -37,7 +37,7 @@ func (a *App) Run(ctx context.Context) error {
 	defer func() {
 		err := a.db.Disconnect(ctx)
 		if err != nil {
-			fmt.Println("failed to close redis", err)
+			fmt.Println("failed to close db", err)
 		}
 	}()
 

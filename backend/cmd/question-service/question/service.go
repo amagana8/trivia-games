@@ -29,7 +29,7 @@ func (s *Service) CreateQuestion(ctx context.Context, authorId string, query str
 	now := time.Now().UTC()
 
 	question := model.Question{
-		AuthorID:  authorObjectId,
+		AuthorId:  authorObjectId,
 		Query:     query,
 		Answer:    answer,
 		CreatedAt: &now,
@@ -41,7 +41,7 @@ func (s *Service) CreateQuestion(ctx context.Context, authorId string, query str
 		fmt.Println("failed to insert question:", err)
 		return nil, err
 	}
-	question.ID = *questionId
+	question.Id = *questionId
 
 	return &question, nil
 }
