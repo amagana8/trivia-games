@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+import "cmd/question-service/proto/question.proto";
+
+package gridGame;
+
+option go_package = "cmd/game-service/pb";
+
+service GridGameService {
+    rpc CreateGridGame(CreateGridGameRequest) returns (GridGame);
+    rpc GetGridGame(GridGameId) returns (GridGame);
+    rpc GetAllGridGames(GetAllGridGamesRequest) returns (GetAllGridGamesResponse);
+    rpc UpdateGridGame(GridGame) returns (GridGame);
+    rpc DeleteGridGame(GridGameId) returns (DeleteGridGameResponse);
+}
+
+message Column {
+    string category = 1;
+    repeated question.Question questions = 2;
+}
+
+message GridGame {
+    string id = 1;
+    repeated Column game = 2;
+    string createdAt = 3;
+    string updatedAt = 4;
+}
+
+message CreateGridGameRequest {
+    repeated Column game = 2;
+}
+
+message GridGameId {
+    string id = 1;
+}
+
+message GetAllGridGamesRequest {}
+
+message GetAllGridGamesResponse {
+    repeated GridGame gridGames = 1;
+}
+
+message DeleteGridGameResponse {}
