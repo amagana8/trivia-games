@@ -13,7 +13,7 @@ type Column struct {
 
 type GridGame struct {
 	Id        primitive.ObjectID `bson:"_id,omitempty"`
-	Game      []Column           `bson:"game"`
+	Grid      []Column           `bson:"grid"`
 	CreatedAt *time.Time         `bson:"createdAt"`
 	UpdatedAt *time.Time         `bson:"updatedAt"`
 }

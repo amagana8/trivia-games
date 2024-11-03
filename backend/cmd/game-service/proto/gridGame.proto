@@ -21,13 +21,13 @@ message Column {
 
 message GridGame {
     string id = 1;
-    repeated Column game = 2;
+    repeated Column grid = 2;
     string createdAt = 3;
     string updatedAt = 4;
 }
 
 message CreateGridGameRequest {
-    repeated Column game = 2;
+    repeated Column grid = 2;
 }
 
 message GridGameId {

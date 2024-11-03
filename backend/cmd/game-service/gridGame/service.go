@@ -19,11 +19,11 @@ func NewService(repository *Repository) *Service {
 	}
 }
 
-func (s *Service) CreateGridGame(ctx context.Context, game []model.Column) (*model.GridGame, error) {
+func (s *Service) CreateGridGame(ctx context.Context, grid []model.Column) (*model.GridGame, error) {
 	now := time.Now().UTC()
 
 	gridGame := model.GridGame{
-		Game:      game,
+		Grid:      grid,
 		CreatedAt: &now,
 		UpdatedAt: &now,
 	}
@@ -58,15 +58,15 @@ func (s *Service) GetGridGameById(ctx context.Context, id string) (*model.GridGa
 	return gridGame, nil
 }
 
-func (s *Service) UpdateGridGameById(ctx context.Context, id string, game []model.Column) (*model.GridGame, error) {
+func (s *Service) UpdateGridGameById(ctx context.Context, id string, grid []model.Column) (*model.GridGame, error) {
 	now := time.Now().UTC()
 
 	updates := map[string]interface{}{
 		"updatedAt": now,
 	}
 
-	if len(game) != 0 {
-		updates["game"] = game
+	if len(grid) != 0 {
+		updates["game"] = grid
 	}
 
 	gridGame, err := s.Repository.UpdateByID(ctx, id, updates)

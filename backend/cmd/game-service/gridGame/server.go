@@ -26,11 +26,11 @@ func NewServer(service *Service) *Server {
 }
 
 func gridGameToResponse(g *model.GridGame) *pb.GridGame {
-	gridGame := make([]*pb.Column, len(g.Game))
-	for x := range g.Game {
-		gridGame[x].Category = g.Game[x].Category
-		for y := range g.Game[x].Questions {
-			gridGame[x].Questions[y] = question.QuestionToResponse(&g.Game[x].Questions[y])
+	gridGame := make([]*pb.Column, len(g.Grid))
+	for x := range g.Grid {
+		gridGame[x].Category = g.Grid[x].Category
+		for y := range g.Grid[x].Questions {
+			gridGame[x].Questions[y] = question.QuestionToResponse(&g.Grid[x].Questions[y])
 		}
 	}
 

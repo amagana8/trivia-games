@@ -50,13 +50,13 @@ func (r *Repository) FindById(ctx context.Context, id string) (*model.GridGame, 
 		return nil, err
 	}
 
-	game := model.GridGame{}
-	err = r.Collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&game)
+	gridGame := model.GridGame{}
+	err = r.Collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&gridGame)
 	if err != nil {
 		return nil, err
 	}
 
-	return &game, nil
+	return &gridGame, nil
 }
 
 func (r *Repository) UpdateByID(ctx context.Context, id string, updates map[string]interface{}) (*model.GridGame, error) {
