@@ -63,8 +63,9 @@ func (s *Server) GetAllQuestions(ctx context.Context, in *pb.GetAllQuestionsRequ
 	}
 
 	res := &pb.GetAllQuestionsResponse{}
-	for _, q := range *questions {
-		res.Questions = append(res.Questions, QuestionToResponse(&q))
+	res.Questions = make([]*pb.Question, len(*questions))
+	for i, q := range *questions {
+		res.Questions[i] = QuestionToResponse(&q)
 	}
 
 	return res, nil
