@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/amagana8/trivia-games/backend/cmd/question-service/pb"
 	"github.com/amagana8/trivia-games/backend/pkg/model"
+	"github.com/amagana8/trivia-games/backend/pkg/pb"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"

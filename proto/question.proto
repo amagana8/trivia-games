@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package question;
 
-option go_package = "github.com/amagana8/trivia-games/backend/cmd/question-service/pb";
+option go_package = "github.com/amagana8/trivia-games/backend/pkg/pb";
 
 service QuestionService {
     rpc CreateQuestion(CreateQuestionRequest) returns (Question);

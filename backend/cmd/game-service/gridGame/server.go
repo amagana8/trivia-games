@@ -5,9 +5,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/amagana8/trivia-games/backend/cmd/game-service/pb"
 	"github.com/amagana8/trivia-games/backend/cmd/question-service/question"
 	"github.com/amagana8/trivia-games/backend/pkg/model"
+	"github.com/amagana8/trivia-games/backend/pkg/pb"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
@@ -26,17 +26,17 @@ func NewServer(service *Service) *Server {
 }
 
 func gridGameToResponse(g *model.GridGame) *pb.GridGame {
-	gridGame := make([]*pb.Column, len(g.Grid))
+	grid := make([]*pb.Column, len(g.Grid))
 	for x := range g.Grid {
-		gridGame[x].Category = g.Grid[x].Category
+		grid[x].Category = g.Grid[x].Category
 		for y := range g.Grid[x].Questions {
-			gridGame[x].Questions[y] = question.QuestionToResponse(&g.Grid[x].Questions[y])
+			grid[x].Questions[y] = question.QuestionToResponse(&g.Grid[x].Questions[y])
 		}
 	}
 
 	return &pb.GridGame{
 		Id:        g.Id.Hex(),
-		Game:      gridGame,
+		Grid:      grid,
 		CreatedAt: g.CreatedAt.String(),
 		UpdatedAt: g.UpdatedAt.String(),
 	}
@@ -79,7 +79,7 @@ func responseGridToModelGrid(responseGrid []*pb.Column) ([]model.Column, error) 
 }
 
 func (s *Server) CreateGridGame(ctx context.Context, in *pb.CreateGridGameRequest) (*pb.GridGame, error) {
-	input, err := responseGridToModelGrid(in.Game)
+	input, err := responseGridToModelGrid(in.Grid)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid grid")
 	}
@@ -119,7 +119,7 @@ func (s *Server) GetGridGame(ctx context.Context, in *pb.GridGameId) (*pb.GridGa
 }
 
 func (s *Server) UpdateGridGame(ctx context.Context, in *pb.GridGame) (*pb.GridGame, error) {
-	input, err := responseGridToModelGrid(in.Game)
+	input, err := responseGridToModelGrid(in.Grid)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid grid")
 	}

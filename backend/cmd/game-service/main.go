@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/amagana8/trivia-games/backend/cmd/game-service/gridGame"
-	"github.com/amagana8/trivia-games/backend/cmd/game-service/pb"
 	"github.com/amagana8/trivia-games/backend/pkg/application"
+	"github.com/amagana8/trivia-games/backend/pkg/pb"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc"

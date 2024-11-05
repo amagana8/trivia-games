@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-import "cmd/question-service/proto/question.proto";
+import "question.proto";
 
 package gridGame;
 
-option go_package = "cmd/game-service/pb";
+option go_package = "github.com/amagana8/trivia-games/backend/pkg/pb";
 
 service GridGameService {
     rpc CreateGridGame(CreateGridGameRequest) returns (GridGame);
