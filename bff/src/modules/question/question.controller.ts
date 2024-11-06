@@ -1,6 +1,8 @@
-import { Controller, Get, Inject, OnModuleInit, Param, Body, Post, Put, HttpException, HttpStatus, Delete } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, OnModuleInit, Param, Post, Put } from "@nestjs/common";
 import { ClientGrpc } from "@nestjs/microservices";
-import { CreateQuestionRequest, Question, QuestionServiceClient } from "src/pb/question";
+import { QuestionServiceClient } from "src/pb/question";
+import { CreateQuestionDto } from "./dto/create-question.dto";
+import { UpdateQuestionDto } from "./dto/update-question.dto";
 
 @Controller('question')
 export class QuestionController implements OnModuleInit {
@@ -13,7 +15,7 @@ export class QuestionController implements OnModuleInit {
     }
 
     @Post()
-    async createQuestion(@Body() createQuestionDto: CreateQuestionRequest) {
+    async createQuestion(@Body() createQuestionDto: CreateQuestionDto) {
         return this.questionService.createQuestion(createQuestionDto);
     }
 
@@ -28,11 +30,8 @@ export class QuestionController implements OnModuleInit {
     }
 
     @Put(':id')
-    async updateQuestion(@Param('id')id : string, @Body() updateQuestionDto: Question) {
-        if (id !== updateQuestionDto.id) {
-            throw new HttpException('ID in path does not match ID in body', HttpStatus.BAD_REQUEST);
-        }
-        return this.questionService.updateQuestion(updateQuestionDto);
+    async updateQuestion(@Param('id')id : string, @Body() updateQuestionDto: UpdateQuestionDto) {
+        return this.questionService.updateQuestion({...updateQuestionDto, id});
     }
 
     @Delete(':id')
