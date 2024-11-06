@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/amagana8/trivia-games/backend/pkg/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -19,10 +20,16 @@ func NewService(repository *Repository) *Service {
 	}
 }
 
-func (s *Service) CreateGridGame(ctx context.Context, grid []model.Column) (*model.GridGame, error) {
+func (s *Service) CreateGridGame(ctx context.Context, authorId string, grid []model.Column) (*model.GridGame, error) {
+	authorObjectId, err := primitive.ObjectIDFromHex(authorId)
+	if err != nil {
+		return nil, err
+	}
+
 	now := time.Now().UTC()
 
 	gridGame := model.GridGame{
+		AuthorId:  authorObjectId,
 		Grid:      grid,
 		CreatedAt: &now,
 		UpdatedAt: &now,

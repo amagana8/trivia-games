@@ -10,7 +10,7 @@ service GridGameService {
     rpc CreateGridGame(CreateGridGameRequest) returns (GridGame);
     rpc GetGridGame(GridGameId) returns (GridGame);
     rpc GetAllGridGames(GetAllGridGamesRequest) returns (GetAllGridGamesResponse);
-    rpc UpdateGridGame(GridGame) returns (GridGame);
+    rpc UpdateGridGame(UpdateGridGameRequest) returns (GridGame);
     rpc DeleteGridGame(GridGameId) returns (DeleteGridGameResponse);
 }
 
@@ -27,6 +27,12 @@ message GridGame {
 }
 
 message CreateGridGameRequest {
+    string authorId = 1;
+    repeated Column grid = 2;
+}
+
+message UpdateGridGameRequest {
+    string id = 1;
     repeated Column grid = 2;
 }
 

@@ -71,7 +71,7 @@ func (s *Server) GetAllQuestions(ctx context.Context, in *pb.GetAllQuestionsRequ
 	return res, nil
 }
 
-func (s *Server) UpdateQuestion(ctx context.Context, in *pb.Question) (*pb.Question, error) {
+func (s *Server) UpdateQuestion(ctx context.Context, in *pb.UpdateQuestionRequest) (*pb.Question, error) {
 	question, err := s.Service.UpdateQuestionById(ctx, in.Id, in.Query, in.Answer)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to update question")
