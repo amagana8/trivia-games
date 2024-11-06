@@ -23,7 +23,7 @@ func NewServer(service *Service) *Server {
 	}
 }
 
-func QuestionToResponse(q *model.Question) *pb.Question {
+func questionToResponse(q *model.Question) *pb.Question {
 	return &pb.Question{
 		Id:        q.Id.Hex(),
 		AuthorId:  q.AuthorId.Hex(),
@@ -42,7 +42,7 @@ func (s *Server) CreateQuestion(ctx context.Context, in *pb.CreateQuestionReques
 		return nil, status.Error(codes.Internal, "failed to create question")
 	}
 
-	return QuestionToResponse(question), nil
+	return questionToResponse(question), nil
 }
 
 func (s *Server) GetQuestion(ctx context.Context, in *pb.QuestionId) (*pb.Question, error) {
@@ -53,7 +53,7 @@ func (s *Server) GetQuestion(ctx context.Context, in *pb.QuestionId) (*pb.Questi
 		return nil, status.Error(codes.Internal, "failed to get question")
 	}
 
-	return QuestionToResponse(question), nil
+	return questionToResponse(question), nil
 }
 
 func (s *Server) GetAllQuestions(ctx context.Context, in *pb.GetAllQuestionsRequest) (*pb.GetAllQuestionsResponse, error) {
@@ -65,7 +65,7 @@ func (s *Server) GetAllQuestions(ctx context.Context, in *pb.GetAllQuestionsRequ
 	res := &pb.GetAllQuestionsResponse{}
 	res.Questions = make([]*pb.Question, len(*questions))
 	for i, q := range *questions {
-		res.Questions[i] = QuestionToResponse(&q)
+		res.Questions[i] = questionToResponse(&q)
 	}
 
 	return res, nil
@@ -77,7 +77,7 @@ func (s *Server) UpdateQuestion(ctx context.Context, in *pb.UpdateQuestionReques
 		return nil, status.Error(codes.Internal, "failed to update question")
 	}
 
-	return QuestionToResponse(question), nil
+	return questionToResponse(question), nil
 }
 
 func (s *Server) DeleteQuestion(ctx context.Context, in *pb.QuestionId) (*pb.DeleteQuestionResponse, error) {

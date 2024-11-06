@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-import "question.proto";
-
 package gridGame;
 
 option go_package = "github.com/amagana8/trivia-games/backend/pkg/pb";
@@ -16,7 +14,7 @@ service GridGameService {
 
 message Column {
     string category = 1;
-    repeated question.Question questions = 2;
+    repeated string questions = 2;
 }
 
 message GridGame {

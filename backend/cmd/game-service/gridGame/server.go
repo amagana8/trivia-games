@@ -3,9 +3,7 @@ package gridGame
 import (
 	"context"
 	"errors"
-	"time"
 
-	"github.com/amagana8/trivia-games/backend/cmd/question-service/question"
 	"github.com/amagana8/trivia-games/backend/pkg/model"
 	"github.com/amagana8/trivia-games/backend/pkg/pb"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -27,10 +25,10 @@ func NewServer(service *Service) *Server {
 
 func gridGameToResponse(g *model.GridGame) *pb.GridGame {
 	grid := make([]*pb.Column, len(g.Grid))
-	for x := range g.Grid {
-		grid[x].Category = g.Grid[x].Category
-		for y := range g.Grid[x].Questions {
-			grid[x].Questions[y] = question.QuestionToResponse(&g.Grid[x].Questions[y])
+	for x, modelColumn := range g.Grid {
+		grid[x].Category = modelColumn.Category
+		for y, questionId := range modelColumn.Questions {
+			grid[x].Questions[y] = questionId.Hex()
 		}
 	}
 
@@ -44,35 +42,15 @@ func gridGameToResponse(g *model.GridGame) *pb.GridGame {
 
 func responseGridToModelGrid(responseGrid []*pb.Column) ([]model.Column, error) {
 	modelGrid := make([]model.Column, len(responseGrid))
-	for x := range responseGrid {
-		modelGrid[x].Category = responseGrid[x].Category
-		for y, question := range responseGrid[x].Questions {
-			questionId, err := primitive.ObjectIDFromHex(question.Id)
-			if err != nil {
-				return nil, err
-			}
-			authorId, err := primitive.ObjectIDFromHex(question.AuthorId)
-			if err != nil {
-				return nil, err
-			}
-			createdAt, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 MS", question.CreatedAt)
-			if err != nil {
-				return nil, err
-			}
-			updatedAt, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 MS", question.UpdatedAt)
+	for x, responseColumn := range responseGrid {
+		modelGrid[x].Category = responseColumn.Category
+		for y, questionIdHex := range responseColumn.Questions {
+			questionId, err := primitive.ObjectIDFromHex(questionIdHex)
 			if err != nil {
 				return nil, err
 			}
 
-			modelGrid[x].Questions[y] = model.Question{
-				Id:        questionId,
-				Query:     question.Query,
-				Answer:    question.Answer,
-				AuthorId:  authorId,
-				CreatedAt: &createdAt,
-				UpdatedAt: &updatedAt,
-			}
-
+			modelGrid[x].Questions[y] = questionId
 		}
 	}
 	return modelGrid, nil
