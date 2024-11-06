@@ -17,8 +17,8 @@ import (
 )
 
 func main() {
-	mongoURI := flag.String("mongoURI", "mongodb://localhost:27017", "Database hostname url")
-	mongoDatabase := flag.String("mongoDatabase", "triviaGames", "Database name")
+	mongoURI := flag.String("mongoURI", "mongodb://localhost:27018", "Database hostname url")
+	mongoDatabase := flag.String("mongoDatabase", "gameServiceDB", "Database name")
 	serverPort := flag.String("serverPort", ":3002", "HTTP server network port")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
