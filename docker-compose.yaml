@@ -1,7 +1,8 @@
 services:
   question-service:
-    image: golang:1.23.2
-    command: ["go", "run", "./backend/cmd/question-service"]
+    build:
+      context: ./
+      dockerfile: ./backend/cmd/question-service/Dockerfile
     ports:
       - 3001:3001
     depends_on:
@@ -10,9 +11,12 @@ services:
     image: mongodb/mongodb-community-server:8.0.1-ubuntu2204
     ports:
       - 27017:27017
+    volumes:
+      - question-service-db-volume:/data/db 
   game-service:
-    image: golang:1.23.2
-    command: ["go", "run", "./backend/cmd/game-service"]
+    build:
+      context: ./
+      dockerfile: ./backend/cmd/game-service/Dockerfile
     ports:
       - 3002:3002
     depends_on:
@@ -21,3 +25,14 @@ services:
     image: mongodb/mongodb-community-server:8.0.1-ubuntu2204
     ports:
       - 27018:27017
+    volumes:
+      - game-service-db-volume:/data/db 
+  bff:
+    build:
+      context: ./
+      dockerfile: ./bff/Dockerfile
+    ports:
+      - 3003:3003
+volumes:
+  question-service-db-volume:
+  game-service-db-volume:
