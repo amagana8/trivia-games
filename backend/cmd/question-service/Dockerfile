@@ -33,4 +33,4 @@ COPY --from=build /question-service ./
 
 EXPOSE 3001
 
-CMD ["/question-service"]
+ENTRYPOINT ["/question-service"]

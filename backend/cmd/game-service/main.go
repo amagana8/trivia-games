@@ -20,6 +20,7 @@ func main() {
 	mongoURI := flag.String("mongoURI", "mongodb://localhost:27018", "Database hostname url")
 	mongoDatabase := flag.String("mongoDatabase", "gameServiceDB", "Database name")
 	serverPort := flag.String("serverPort", ":3002", "HTTP server network port")
+	flag.Parse()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()

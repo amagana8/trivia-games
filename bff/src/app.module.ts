@@ -3,9 +3,17 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { QuestionModule } from './modules/question/question.module';
 import { GridGameModule } from './modules/grid-game/grid-game.module';
+import { ConfigModule } from '@nestjs/config';
+import configuration from './config/configuration';
 
 @Module({
-  imports: [QuestionModule, GridGameModule],
+  imports: [
+    ConfigModule.forRoot({
+      load: [configuration]
+    }),
+    QuestionModule,
+    GridGameModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

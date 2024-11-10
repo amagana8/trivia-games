@@ -33,4 +33,4 @@ COPY --from=build /game-service ./
 
 EXPOSE 3002
 
-CMD ["/game-service"]
+ENTRYPOINT [ "/game-service"]
