@@ -1,0 +1,30 @@
+{
+  "name": "bff",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "start": "node dist/main.js",
+    "build": "pnpm run proto:generate && tsc -p tsconfig.json",
+    "dev": "pnpm run build && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"tsc -w\" \"pnpm run start\"",
+    "proto:generate": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --proto_path=../proto --ts_proto_out=./src/pb --ts_proto_opt=outputServices=nice-grpc,outputServices=generic-definitions,esModuleInterop=true,importSuffix=.js ../proto/*.proto"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^2.2.2",
+    "@trpc/server": "11.0.0-rc.630",
+    "fastify": "^5.1.0",
+    "nice-grpc": "^2.1.10",
+    "nice-grpc-common": "^2.0.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "concurrently": "^9.1.0",
+    "fastify-tsconfig": "^2.0.0",
+    "ts-proto": "^2.2.7",
+    "typescript": "^5.6.3"
+  }
+}
