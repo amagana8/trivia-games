@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mui/material": "^6.1.7",
+    "@mui/material-pigment-css": "^6.1.7",
     "@tanstack/react-query": "^5.59.20",
     "@tanstack/react-router": "^1.79.0",
     "@trpc/client": "11.0.0-rc.630",
@@ -19,6 +21,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
+    "@pigment-css/vite-plugin": "^0.0.27",
     "@tanstack/eslint-plugin-query": "^5.60.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

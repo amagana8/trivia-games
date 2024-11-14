@@ -4,6 +4,7 @@ import type { FC } from "react";
 import { router } from "./router";
 import { trpc } from "./trpc";
 import { httpBatchLink } from "@trpc/client";
+import { CssBaseline } from "@mui/material";
 
 const queryClient = new QueryClient();
 const trpcClient = trpc.createClient({
@@ -13,6 +14,7 @@ const trpcClient = trpc.createClient({
 export const App: FC = () => (
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
+      <CssBaseline />
       <RouterProvider router={router} />
     </QueryClientProvider>
   </trpc.Provider>
