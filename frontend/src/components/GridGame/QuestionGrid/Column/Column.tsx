@@ -38,7 +38,7 @@ const Column: FC<{
           onClick={() => {
             setGridGame(
               produce((draft) => {
-                draft[categoryIndex].questions.push("");
+                draft.grid[categoryIndex].questions.push("");
               })
             );
           }}
@@ -49,7 +49,7 @@ const Column: FC<{
           onClick={() => {
             setGridGame(
               produce((draft) => {
-                draft[categoryIndex].questions.pop();
+                draft.grid[categoryIndex].questions.pop();
               })
             );
           }}

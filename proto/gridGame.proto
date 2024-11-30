@@ -20,19 +20,22 @@ message Column {
 message GridGame {
     string id = 1;
     string authorId = 2;
-    repeated Column grid = 3;
-    string createdAt = 4;
-    string updatedAt = 5;
+    string title = 3;
+    repeated Column grid = 4;
+    string createdAt = 5;
+    string updatedAt = 6;
 }
 
 message CreateGridGameRequest {
     string authorId = 1;
-    repeated Column grid = 2;
+    string title = 2;
+    repeated Column grid = 3;
 }
 
 message UpdateGridGameRequest {
     string id = 1;
-    repeated Column grid = 2;
+    string title = 2;
+    repeated Column grid = 3;
 }
 
 message GridGameId {

@@ -65,7 +65,7 @@ func (s *Server) CreateGridGame(ctx context.Context, in *pb.CreateGridGameReques
 		return nil, status.Error(codes.InvalidArgument, "invalid grid")
 	}
 
-	gridGame, err := s.Service.CreateGridGame(ctx, in.AuthorId, input)
+	gridGame, err := s.Service.CreateGridGame(ctx, in.AuthorId, in.Title, input)
 	if errors.Is(err, primitive.ErrInvalidHex) {
 		return nil, status.Error(codes.InvalidArgument, "invalid author id")
 	} else if err != nil {
@@ -106,7 +106,7 @@ func (s *Server) UpdateGridGame(ctx context.Context, in *pb.UpdateGridGameReques
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid grid")
 	}
-	gridGame, err := s.Service.UpdateGridGameById(ctx, in.Id, input)
+	gridGame, err := s.Service.UpdateGridGameById(ctx, in.Id, in.Title, input)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to update gridGame")
 

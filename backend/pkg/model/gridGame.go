@@ -14,6 +14,7 @@ type Column struct {
 type GridGame struct {
 	Id        primitive.ObjectID `bson:"_id,omitempty"`
 	AuthorId  primitive.ObjectID `bson:"authorId"`
+	Title     string             `bson:"title"`
 	Grid      []Column           `bson:"grid"`
 	CreatedAt *time.Time         `bson:"createdAt"`
 	UpdatedAt *time.Time         `bson:"updatedAt"`

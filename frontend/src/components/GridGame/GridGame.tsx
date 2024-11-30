@@ -9,19 +9,22 @@ import { QuestionBank } from "./QuestionBank/QuestionBank";
 import { QuestionGrid } from "./QuestionGrid/QuestionGrid";
 
 export const GridGame: FC = () => {
-  const [grid, setGrid] = useAtom(gridGameAtom);
+  const [gridGame, setGridGame] = useAtom(gridGameAtom);
   const setIsEditing = useSetAtom(isEditingAtom);
   const [showList, setShowList] = useState(false);
   const { data } = trpc.gridGame.getAllGridGames.useQuery(undefined, {
     enabled: showList,
   });
 
-  if (!grid.length) {
+  if (!gridGame.grid.length) {
     return (
       <>
         <Button
           onClick={() => {
-            setGrid([{ category: "", questions: ["", "", "", "", ""] }]);
+            setGridGame({
+              title: "",
+              grid: [{ category: "", questions: ["", "", "", "", ""] }],
+            });
             setIsEditing(true);
           }}
         >
@@ -35,10 +38,10 @@ export const GridGame: FC = () => {
                 key={gridGame.id}
                 onClick={() => {
                   setIsEditing(true);
-                  setGrid(gridGame.grid);
+                  setGridGame({ title: gridGame.title, grid: gridGame.grid });
                 }}
               >
-                {gridGame.id}
+                {gridGame.title}
               </ListItem>
             ))}
           </List>
