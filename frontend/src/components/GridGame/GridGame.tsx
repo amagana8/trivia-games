@@ -9,23 +9,29 @@ import { QuestionBank } from "./QuestionBank/QuestionBank";
 import { QuestionGrid } from "./QuestionGrid/QuestionGrid";
 
 export const GridGame: FC = () => {
-  const [gridGame, setGridGame] = useAtom(gridGameAtom);
-  const setIsEditing = useSetAtom(isEditingAtom);
+  const setGridGame = useSetAtom(gridGameAtom);
+  const [isEditing, setIsEditing] = useAtom(isEditingAtom);
   const [showList, setShowList] = useState(false);
+  const createGridGame = trpc.gridGame.createGridGame.useMutation({
+    onSuccess: (data) => {
+      setGridGame({ title: data.title, grid: data.grid, id: data.id });
+      setIsEditing(true);
+    },
+  });
   const { data } = trpc.gridGame.getAllGridGames.useQuery(undefined, {
     enabled: showList,
   });
 
-  if (!gridGame.grid.length) {
+  if (!isEditing) {
     return (
       <>
         <Button
           onClick={() => {
-            setGridGame({
+            createGridGame.mutate({
+              authorId: "672ae769cb6a1ba56cd5b7a6", //TODO: replace this with the actual authorId when user service is ready
               title: "",
-              grid: [{ category: "", questions: ["", "", "", "", ""] }],
+              grid: [],
             });
-            setIsEditing(true);
           }}
         >
           Create New Game
@@ -38,7 +44,11 @@ export const GridGame: FC = () => {
                 key={gridGame.id}
                 onClick={() => {
                   setIsEditing(true);
-                  setGridGame({ title: gridGame.title, grid: gridGame.grid });
+                  setGridGame({
+                    id: gridGame.id,
+                    title: gridGame.title,
+                    grid: gridGame.grid,
+                  });
                 }}
               >
                 {gridGame.title}

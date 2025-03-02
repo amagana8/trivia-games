@@ -7,8 +7,8 @@ import (
 )
 
 type Column struct {
-	Category  string                `bson:"category"`
-	Questions [5]primitive.ObjectID `bson:"questions"`
+	Category  string               `bson:"category"`
+	Questions []primitive.ObjectID `bson:"questions"`
 }
 
 type GridGame struct {

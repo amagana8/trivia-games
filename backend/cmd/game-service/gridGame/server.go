@@ -37,7 +37,9 @@ func gridGameToResponse(g *model.GridGame) *pb.GridGame {
 
 	return &pb.GridGame{
 		Id:        g.Id.Hex(),
+		AuthorId:  g.AuthorId.Hex(),
 		Grid:      grid,
+		Title:     g.Title,
 		CreatedAt: g.CreatedAt.String(),
 		UpdatedAt: g.UpdatedAt.String(),
 	}
@@ -47,6 +49,7 @@ func responseGridToModelGrid(responseGrid []*pb.Column) ([]model.Column, error) 
 	modelGrid := make([]model.Column, len(responseGrid))
 	for x, responseColumn := range responseGrid {
 		modelGrid[x].Category = responseColumn.Category
+		modelGrid[x].Questions = make([]primitive.ObjectID, len(responseColumn.Questions))
 		for y, questionIdHex := range responseColumn.Questions {
 			questionId, err := primitive.ObjectIDFromHex(questionIdHex)
 			if err != nil {

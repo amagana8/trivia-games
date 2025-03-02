@@ -1,3 +1,4 @@
+import { cyan, yellow } from "@mui/material/colors";
 import { createTheme } from "@mui/material/styles";
 import type { ExtendTheme } from '@pigment-css/react/theme';
 
@@ -16,7 +17,12 @@ declare module '@pigment-css/react/theme' {
 
 
 export const theme = createTheme({
-  cssVariables: true,
+  cssVariables: {colorSchemeSelector: 'data'},
+  defaultColorScheme: 'dark',
   colorSchemes: { light: true, dark: true },
   spacing: 12,
+  palette: {
+    primary: cyan,
+    secondary: yellow,
+  }
 });

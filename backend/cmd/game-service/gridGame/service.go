@@ -74,7 +74,7 @@ func (s *Service) UpdateGridGameById(ctx context.Context, id string, title strin
 	}
 
 	if len(grid) != 0 {
-		updates["game"] = grid
+		updates["grid"] = grid
 	}
 
 	if title != "" {

@@ -35,6 +35,7 @@ export const gridGameRouter = router({
   updateGridGame: publicProcedure
     .input(
       z.object({
+        id: z.string(),
         title: z.string(),
         grid: gridValidator,
       })

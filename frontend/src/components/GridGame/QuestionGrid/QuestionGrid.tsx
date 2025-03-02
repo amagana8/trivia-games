@@ -1,15 +1,20 @@
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { Button, TextField, Typography } from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import { Button, IconButton, TextField, Typography } from "@mui/material";
 import { produce } from "immer";
 import { useAtom, useAtomValue } from "jotai";
 import { FC, memo, useEffect } from "react";
 import { gridGameAtom } from "../../../atoms/gridGame";
 import { isEditingAtom } from "../../../atoms/isEditing";
+import { trpc } from "../../../trpc";
 import { Column } from "./Column/Column";
+import * as styles from "./QuestionGrid.styles";
 
 export const QuestionGrid: FC = memo(() => {
   const [gridGame, setGridGame] = useAtom(gridGameAtom);
   const isEditing = useAtomValue(isEditingAtom);
+  const updateGridGame = trpc.gridGame.updateGridGame.useMutation();
 
   useEffect(() => {
     return monitorForElements({
@@ -40,10 +45,21 @@ export const QuestionGrid: FC = memo(() => {
     <>
       <div>
         {isEditing ? (
-          <TextField />
+          <TextField
+            value={gridGame.title}
+            onChange={(e) =>
+              setGridGame((prevState) => ({
+                ...prevState,
+                title: e.target.value,
+              }))
+            }
+            variant="standard"
+            placeholder="Title"
+          />
         ) : (
           <Typography variant="h3">Title</Typography>
         )}
+
         <div style={{ display: "flex", columnGap: "1rem" }}>
           {gridGame.grid.map(({ category, questions }, index) => (
             <Column
@@ -56,21 +72,44 @@ export const QuestionGrid: FC = memo(() => {
         </div>
       </div>
       {isEditing && (
-        <Button
-          onClick={() =>
-            setGridGame(
-              produce((draft) => {
-                draft.grid.push({
-                  category: "",
-                  questions: ["", "", "", "", ""],
-                });
-              })
-            )
-          }
-        >
-          Add Column
-        </Button>
+        <div className={styles.columnControls}>
+          <IconButton
+            onClick={() =>
+              setGridGame(
+                produce((draft) => {
+                  draft.grid.pop();
+                })
+              )
+            }
+          >
+            <RemoveCircleOutlineIcon />
+          </IconButton>
+
+          <IconButton
+            onClick={() =>
+              setGridGame(
+                produce((draft) => {
+                  draft.grid.push({
+                    category: "",
+                    questions: ["", "", "", "", ""],
+                  });
+                })
+              )
+            }
+          >
+            <AddCircleOutlineIcon />
+          </IconButton>
+        </div>
       )}
+
+      <div className={styles.footer}>
+        <Button
+          variant="contained"
+          onClick={() => updateGridGame.mutate(gridGame)}
+        >
+          Save
+        </Button>
+      </div>
     </>
   );
 });

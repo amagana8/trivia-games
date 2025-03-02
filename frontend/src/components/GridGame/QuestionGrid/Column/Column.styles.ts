@@ -6,3 +6,11 @@ export const column = css(({theme}) => ({
     rowGap: theme.spacing(2),
     width: "12em",
 }));
+
+// TODO: fix when MUI fixes type
+export const controls = css(({}) => ({
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "column",
+}));
+  
