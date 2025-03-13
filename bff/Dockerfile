@@ -1,4 +1,4 @@
-FROM node:20.15.0 AS base
+FROM node:23-slim AS base
 
 WORKDIR /app/bff
 
