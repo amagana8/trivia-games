@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/amagana8/trivia-games/backend/pkg/pb";
+
+service UserService {
+    rpc signUp(SignUpRequest) returns (SignInResponse);
+    rpc signIn(SignInRequest) returns (SignInResponse);
+    rpc changePassword(ChangePasswordRequest) returns (SignInResponse);
+    rpc refreshToken(RefreshTokenRequest) returns (SignInResponse);
+}
+
+message SignUpRequest {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+}
+
+message SignInRequest {
+    string username = 1;
+    string password = 2;
+}
+
+message SignInResponse {
+    string accessToken = 1;
+    string refreshToken = 2;
+}
+
+message ChangePasswordRequest {
+    string id = 1;
+    string newPassword = 2;
+}
+
+message RefreshTokenRequest {
+    string refreshToken = 1;
+}
