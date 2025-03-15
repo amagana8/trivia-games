@@ -1,17 +1,13 @@
 import {
   createRootRoute,
   createRoute,
-  createRouter,
-  Outlet,
+  createRouter
 } from "@tanstack/react-router";
 import { GridGame } from "./components/GridGame/GridGame";
+import { Root } from "./components/Root/Root";
 
 const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-    </>
-  ),
+  component: () => <Root />,
 });
 
 const indexRoute = createRoute({

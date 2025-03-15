@@ -21,10 +21,12 @@ export const GridGame: FC = () => {
   const { data } = trpc.gridGame.getAllGridGames.useQuery(undefined, {
     enabled: showList,
   });
+  const updateGridGame = trpc.gridGame.updateGridGame.useMutation();
+  
 
   if (!isEditing) {
     return (
-      <>
+      <div>
         <Button
           onClick={() => {
             createGridGame.mutate({
@@ -56,7 +58,7 @@ export const GridGame: FC = () => {
             ))}
           </List>
         )}
-      </>
+      </div>
     );
   }
 
@@ -65,6 +67,15 @@ export const GridGame: FC = () => {
       <QuestionBank />
 
       <QuestionGrid />
+
+      <div className={styles.footer}>
+        <Button
+          variant="contained"
+          onClick={() => updateGridGame.mutate({} as any)}
+        >
+          Save
+        </Button>
+      </div>
     </div>
   );
 };

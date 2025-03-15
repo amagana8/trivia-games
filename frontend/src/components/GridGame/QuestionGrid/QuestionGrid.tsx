@@ -1,20 +1,18 @@
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import { Button, IconButton, TextField, Typography } from "@mui/material";
+import { IconButton, TextField, Typography } from "@mui/material";
 import { produce } from "immer";
 import { useAtom, useAtomValue } from "jotai";
 import { FC, memo, useEffect } from "react";
 import { gridGameAtom } from "../../../atoms/gridGame";
 import { isEditingAtom } from "../../../atoms/isEditing";
-import { trpc } from "../../../trpc";
 import { Column } from "./Column/Column";
 import * as styles from "./QuestionGrid.styles";
 
 export const QuestionGrid: FC = memo(() => {
   const [gridGame, setGridGame] = useAtom(gridGameAtom);
   const isEditing = useAtomValue(isEditingAtom);
-  const updateGridGame = trpc.gridGame.updateGridGame.useMutation();
 
   useEffect(() => {
     return monitorForElements({
@@ -42,7 +40,7 @@ export const QuestionGrid: FC = memo(() => {
   }, []);
 
   return (
-    <>
+    <div className={styles.root}>
       <div>
         {isEditing ? (
           <TextField
@@ -71,8 +69,9 @@ export const QuestionGrid: FC = memo(() => {
           ))}
         </div>
       </div>
+
       {isEditing && (
-        <div className={styles.columnControls}>
+        <div className={styles.gridControls}>
           <IconButton
             onClick={() =>
               setGridGame(
@@ -101,15 +100,6 @@ export const QuestionGrid: FC = memo(() => {
           </IconButton>
         </div>
       )}
-
-      <div className={styles.footer}>
-        <Button
-          variant="contained"
-          onClick={() => updateGridGame.mutate(gridGame)}
-        >
-          Save
-        </Button>
-      </div>
-    </>
+    </div>
   );
 });

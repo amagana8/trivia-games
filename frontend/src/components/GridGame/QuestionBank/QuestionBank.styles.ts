@@ -1,10 +1,12 @@
 import { css } from "@mui/material-pigment-css";
 
-export const sidebar = css({
-  height: "100vh",
+export const sidebar =css(({ theme }) => ({
+  gridArea: "sidebar",
   display: "flex",
   flexDirection: "column",
-});
+  paddingLeft: theme.spacing(1),
+
+}));
 
 export const list = css(({ theme }) => ({
   display: "flex",
