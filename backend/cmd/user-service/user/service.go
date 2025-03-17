@@ -20,6 +20,8 @@ var ErrUsernameExists = errors.New("username already exists")
 var ErrUserDoesNotExist = errors.New("user does not exist")
 var ErrIncorrectPassword = errors.New("incorrect password")
 var ErrInvalidRefreshToken = errors.New("invalid refresh token")
+var ErrInvalidAccessToken = errors.New("invalid access token")
+var ErrEmailExists = errors.New("email already exists")
 
 const passwordRegex = "^\\S{8,256}$"
 
@@ -95,7 +97,16 @@ func (s *Service) CreateUser(ctx context.Context, username string, email string,
 		return nil, err
 	}
 
-	existingUser, err := s.Repository.GetByUsername(ctx, username)
+	existingUser, err := s.Repository.GetByEmail(ctx, email)
+	if existingUser != nil {
+		return nil, ErrEmailExists
+	}
+	if err != nil {
+		fmt.Println("failed checking if email exists:", err)
+		return nil, err
+	}
+
+	existingUser, err = s.Repository.GetByUsername(ctx, username)
 	if existingUser != nil {
 		return nil, ErrUsernameExists
 	}
@@ -234,6 +245,7 @@ func (s *Service) RefreshToken(ctx context.Context, refreshToken string) (*AuthT
 	})
 
 	if err != nil {
+		fmt.Println("failed to parse refresh token:", err)
 		return nil, err
 	}
 
@@ -247,6 +259,7 @@ func (s *Service) RefreshToken(ctx context.Context, refreshToken string) (*AuthT
 
 		user, err := s.Repository.GetById(ctx, userId)
 		if err != nil {
+			fmt.Println("failed to get user by id:", err)
 			return nil, err
 		}
 		if tokenVersion != user.TokenVersion {
@@ -255,11 +268,13 @@ func (s *Service) RefreshToken(ctx context.Context, refreshToken string) (*AuthT
 
 		accessToken, err := createAccessToken(userId)
 		if err != nil {
+			fmt.Println("failed to create access token:", err)
 			return nil, err
 		}
 
 		refreshToken, err := createRefreshToken(userId, tokenVersion)
 		if err != nil {
+			fmt.Println("failed to create refresh token:", err)
 			return nil, err
 		}
 
@@ -268,6 +283,40 @@ func (s *Service) RefreshToken(ctx context.Context, refreshToken string) (*AuthT
 			RefreshToken: refreshToken,
 		}, nil
 	} else {
+		return nil, err
+	}
+}
+
+func (s *Service) GetMe(ctx context.Context, accessToken string) (*model.User, error) {
+	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+
+		return config.Envs.AccessTokenKey, nil
+	})
+
+	if err != nil {
+		fmt.Println("failed to parse access token:", err)
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, ErrInvalidAccessToken
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		userId := claims["sub"].(string)
+
+		user, err := s.Repository.GetById(ctx, userId)
+		if err != nil {
+			fmt.Println("failed to get user by id:", err)
+			return nil, err
+		}
+
+		return user, nil
+	} else {
+		fmt.Println("failed to get claims from access token")
 		return nil, err
 	}
 }

@@ -9,6 +9,7 @@ service UserService {
     rpc signIn(SignInRequest) returns (SignInResponse);
     rpc changePassword(ChangePasswordRequest) returns (SignInResponse);
     rpc refreshToken(RefreshTokenRequest) returns (SignInResponse);
+    rpc getMe(GetMeRequest) returns (GetMeResponse);
 }
 
 message SignUpRequest {
@@ -34,4 +35,13 @@ message ChangePasswordRequest {
 
 message RefreshTokenRequest {
     string refreshToken = 1;
+}
+
+message GetMeRequest {
+    string accessToken = 1;
+}
+
+message GetMeResponse {
+    string id = 1;
+    string username = 2;
 }

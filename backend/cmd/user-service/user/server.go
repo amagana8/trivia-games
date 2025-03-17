@@ -28,6 +28,8 @@ func (s *Server) SignUp(ctx context.Context, in *pb.SignUpRequest) (*pb.SignInRe
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	} else if errors.Is(err, ErrInvalidPassword) {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
+	} else if errors.Is(err, ErrEmailExists) {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	} else if errors.Is(err, ErrUsernameExists) {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	} else if err != nil {
@@ -83,5 +85,19 @@ func (s *Server) RefreshToken(ctx context.Context, in *pb.RefreshTokenRequest) (
 	return &pb.SignInResponse{
 		AccessToken:  tokens.AccessToken,
 		RefreshToken: tokens.RefreshToken,
+	}, nil
+}
+
+func (s *Server) GetMe(ctx context.Context, in *pb.GetMeRequest) (*pb.GetMeResponse, error) {
+	user, err := s.Service.GetMe(ctx, in.AccessToken)
+	if errors.Is(err, ErrInvalidAccessToken) {
+		return nil, status.Error(codes.Unauthenticated, err.Error())
+	} else if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get user")
+	}
+
+	return &pb.GetMeResponse{
+		Id:       user.Id.Hex(),
+		Username: user.Username,
 	}, nil
 }

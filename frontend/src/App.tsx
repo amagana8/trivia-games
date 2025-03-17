@@ -8,7 +8,14 @@ import { CssBaseline } from "@mui/material";
 
 const queryClient = new QueryClient();
 const trpcClient = trpc.createClient({
-  links: [httpBatchLink({ url: "http://localhost:3003/trpc" })],
+  links: [
+    httpBatchLink({
+      url: "http://localhost:3003/trpc",
+      fetch(url, options) {
+        return fetch(url, { ...options, credentials: "include" });
+      },
+    }),
+  ],
 });
 
 export const App: FC = () => (

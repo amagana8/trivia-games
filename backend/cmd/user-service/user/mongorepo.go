@@ -32,9 +32,26 @@ func (r *Repository) GetByUsername(ctx context.Context, username string) (*model
 	return &user, nil
 }
 
-func (r *Repository) GetById(ctx context.Context, id string) (*model.User, error) {
+func (r *Repository) GetByEmail(ctx context.Context, email string) (*model.User, error) {
 	user := model.User{}
-	err := r.Collection.FindOne(ctx, bson.M{"_id": id}).Decode(&user)
+	err := r.Collection.FindOne(ctx, bson.M{"email": email}).Decode(&user)
+	if err == mongo.ErrNoDocuments {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (r *Repository) GetById(ctx context.Context, id string) (*model.User, error) {
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	user := model.User{}
+	err = r.Collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&user)
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,18 @@
 import { AccountCircle } from "@mui/icons-material";
-import { IconButton, Menu, MenuItem, Paper, Typography } from "@mui/material";
+import {
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Paper,
+  Typography,
+} from "@mui/material";
 import { FC, memo, useCallback, useRef, useState } from "react";
 import * as styles from "./NavBar.styles";
+import { useAtom } from "jotai";
+import { currentUserAtom } from "../../atoms/currentUser";
+import { useNavigate } from "@tanstack/react-router";
+import { trpc } from "../../trpc";
 
 export const NavBar: FC = memo(() => {
   const accountButtonRef = useRef<HTMLButtonElement>(null);
@@ -15,6 +26,21 @@ export const NavBar: FC = memo(() => {
     setMenuOpen(false);
   }, []);
 
+  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
+
+  const navigate = useNavigate();
+
+  const signOut = trpc.user.signOut.useMutation({
+    onSuccess: () => {
+      setCurrentUser(null);
+      navigate({ to: "/" });
+    },
+  });
+  const handleLogout = useCallback(() => {
+    signOut.mutate();
+    closeMenu();
+  }, []);
+
   return (
     <>
       <Paper className={styles.navBar}>
@@ -22,9 +48,26 @@ export const NavBar: FC = memo(() => {
           Trivia Games
         </Typography>
 
-        <IconButton ref={accountButtonRef} onClick={openMenu}>
-          <AccountCircle />
-        </IconButton>
+        {currentUser ? (
+          <IconButton ref={accountButtonRef} onClick={openMenu}>
+            <AccountCircle />
+          </IconButton>
+        ) : (
+          <div>
+            <Button onClick={() => navigate({ to: "/login" })}>Login</Button>
+
+            <Button
+              variant="contained"
+              onClick={() =>
+                navigate({
+                  to: "/sign-up",
+                })
+              }
+            >
+              Sign Up
+            </Button>
+          </div>
+        )}
       </Paper>
 
       <Menu
@@ -34,7 +77,7 @@ export const NavBar: FC = memo(() => {
       >
         <MenuItem>Profile</MenuItem>
 
-        <MenuItem>Logout</MenuItem>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </>
   );

@@ -9,6 +9,7 @@ const server = fastify({ logger: true });
 
 server.register(cors, {
   origin: "http://localhost:5173",
+  credentials: true,
 });
 
 server.register(cookie, {
