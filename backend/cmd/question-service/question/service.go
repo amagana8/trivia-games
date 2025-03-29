@@ -20,7 +20,7 @@ func NewService(repository *Repository) *Service {
 	}
 }
 
-func (s *Service) CreateQuestion(ctx context.Context, authorId string, query string, answer string) (*model.Question, error) {
+func (s *Service) CreateQuestion(ctx context.Context, authorId string, query string, answer string, embedUrl string, embedType model.MediaType) (*model.Question, error) {
 	authorObjectId, err := primitive.ObjectIDFromHex(authorId)
 	if err != nil {
 		return nil, err
@@ -29,9 +29,13 @@ func (s *Service) CreateQuestion(ctx context.Context, authorId string, query str
 	now := time.Now().UTC()
 
 	question := model.Question{
-		AuthorId:  authorObjectId,
-		Query:     query,
-		Answer:    answer,
+		AuthorId: authorObjectId,
+		Query:    query,
+		Answer:   answer,
+		Embed: &model.Media{
+			Url:  embedUrl,
+			Type: embedType,
+		},
 		CreatedAt: &now,
 		UpdatedAt: &now,
 	}
@@ -66,7 +70,7 @@ func (s *Service) GetQuestionById(ctx context.Context, id string) (*model.Questi
 	return question, nil
 }
 
-func (s *Service) UpdateQuestionById(ctx context.Context, id string, query string, answer string) (*model.Question, error) {
+func (s *Service) UpdateQuestionById(ctx context.Context, id string, query string, answer string, embedLink string, embedType model.MediaType) (*model.Question, error) {
 	now := time.Now().UTC()
 
 	updates := map[string]interface{}{
@@ -81,7 +85,15 @@ func (s *Service) UpdateQuestionById(ctx context.Context, id string, query strin
 		updates["answer"] = answer
 	}
 
-	question, err := s.Repository.UpdateByID(ctx, id, updates)
+	if embedLink != "" {
+		updates["embed.url"] = embedLink
+	}
+
+	if embedType != model.Undefined {
+		updates["embed.type"] = embedType
+	}
+
+	question, err := s.Repository.UpdateById(ctx, id, updates)
 	if err != nil {
 		fmt.Println("failed to update question by id:", err)
 		return nil, err

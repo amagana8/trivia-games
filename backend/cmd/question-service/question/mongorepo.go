@@ -59,7 +59,7 @@ func (r *Repository) FindAll(ctx context.Context) ([]model.Question, error) {
 	return questions, nil
 }
 
-func (r *Repository) UpdateByID(ctx context.Context, id string, updates map[string]interface{}) (*model.Question, error) {
+func (r *Repository) UpdateById(ctx context.Context, id string, updates map[string]interface{}) (*model.Question, error) {
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err

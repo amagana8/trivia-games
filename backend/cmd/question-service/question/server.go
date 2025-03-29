@@ -35,7 +35,7 @@ func questionToResponse(q *model.Question) *pb.Question {
 }
 
 func (s *Server) CreateQuestion(ctx context.Context, in *pb.CreateQuestionRequest) (*pb.Question, error) {
-	question, err := s.Service.CreateQuestion(ctx, in.AuthorId, in.Query, in.Answer)
+	question, err := s.Service.CreateQuestion(ctx, in.AuthorId, in.Query, in.Answer, in.Embed.Url, model.MediaType(in.Embed.Type))
 	if errors.Is(err, primitive.ErrInvalidHex) {
 		return nil, status.Error(codes.InvalidArgument, "invalid author id")
 	} else if err != nil {
@@ -72,7 +72,7 @@ func (s *Server) GetAllQuestions(ctx context.Context, in *pb.GetAllQuestionsRequ
 }
 
 func (s *Server) UpdateQuestion(ctx context.Context, in *pb.UpdateQuestionRequest) (*pb.Question, error) {
-	question, err := s.Service.UpdateQuestionById(ctx, in.Id, in.Query, in.Answer)
+	question, err := s.Service.UpdateQuestionById(ctx, in.Id, in.Query, in.Answer, in.Embed.Url, model.MediaType(in.Embed.Type))
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to update question")
 	}

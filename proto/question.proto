@@ -16,12 +16,14 @@ message CreateQuestionRequest {
     string authorId = 1;
     string query = 2;
     string answer = 3; 
+    Media embed = 4;
 }
 
 message UpdateQuestionRequest {
     string id = 1;
     string query = 3;
     string answer = 4;
+    Media embed = 5;
 }
 
 message Question {
@@ -29,8 +31,9 @@ message Question {
     string authorId = 2;
     string query = 3;
     string answer = 4;
-    string createdAt = 5;
-    string updatedAt = 6;
+    Media embed = 5;
+    string createdAt = 6;
+    string updatedAt = 7;
 }
 
 message QuestionId {
@@ -43,4 +46,16 @@ message GetAllQuestionsResponse {
     repeated Question questions = 1;
 }
 
+message Media {
+    string url = 1;
+    MediaType type = 2;
+}
+
 message DeleteQuestionResponse {}
+
+enum MediaType {
+    UNDEFINED = 0;
+    IMAGE = 1;
+    VIDEO = 2;
+    AUDIO = 3;
+}

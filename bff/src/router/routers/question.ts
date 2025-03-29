@@ -2,6 +2,7 @@ import { z } from "zod";
 import { publicProcedure, router } from "../../router/trpc.js";
 import { createChannel, createClient } from "nice-grpc";
 import {
+  MediaType,
   Question,
   QuestionServiceClient,
   QuestionServiceDefinition,
@@ -18,7 +19,12 @@ const questionService: QuestionServiceClient = createClient(
 export const questionRouter = router({
   createQuestion: publicProcedure
     .input(
-      z.object({ authorId: z.string(), query: z.string(), answer: z.string() })
+      z.object({
+        authorId: z.string(),
+        query: z.string(),
+        answer: z.string(),
+        embed: z.object({ url: z.string(), type: z.nativeEnum(MediaType) }),
+      })
     )
     .mutation(({ input }) => questionService.createQuestion(input)),
   getQuestion: publicProcedure
@@ -40,7 +46,13 @@ export const questionRouter = router({
     }
   }),
   updateQuestion: publicProcedure
-    .input(z.object({ query: z.string(), answer: z.string() }))
+    .input(
+      z.object({
+        query: z.string(),
+        answer: z.string(),
+        embed: z.object({ url: z.string(), type: z.nativeEnum(MediaType) }),
+      })
+    )
     .mutation(({ input }) => questionService.updateQuestion(input)),
   deleteQuestion: publicProcedure.query(() =>
     questionService.deleteQuestion({})
