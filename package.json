@@ -1,0 +1,10 @@
+{
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@10.7.0",
+  "private": true,
+  "scripts": {
+    "bff": "pnpm --filter bff dev",
+    "ui": "pnpm --filter trivia-games dev"
+  },
+  "type": "module"
+}

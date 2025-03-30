@@ -1,0 +1,5 @@
+catalog:
+ "typescript": "^5.8.2"
+packages:
+  - bff
+  - frontend
