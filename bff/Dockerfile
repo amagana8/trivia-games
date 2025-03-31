@@ -1,37 +1,31 @@
 FROM node:23-slim AS base
 
-WORKDIR /app/bff
-
-# get protobuf compiler
-RUN apt-get update && \ 
-    apt-get install -y protobuf-compiler
+WORKDIR /app
 
 # setup pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
-# Copy source code
-COPY bff/package.json bff/pnpm-lock.yaml ./
-
-# get prod dependencies for final stage
-FROM base AS prod-deps
-RUN pnpm install --prod --frozen-lockfile
-
-# build app using dev dependencies
 FROM base AS build
+# get protobuf compiler
+RUN apt-get update && \ 
+    apt-get install -y protobuf-compiler
+
+# copy source code
+COPY pnpm-lock.yaml package.json pnpm-workspace.yaml ./
+COPY proto ./proto
+COPY bff ./bff
+
+# build the app and get the prod deps
+WORKDIR /app/bff
 RUN pnpm install --frozen-lockfile
-
-COPY proto ../proto
-COPY bff ./
-
 RUN pnpm run build
+RUN pnpm --filter=bff --prod --legacy deploy /prod
 
-#  final stage
+# build the final image
 FROM base
-
-COPY --from=prod-deps /app/bff/node_modules ./node_modules
-COPY --from=build /app/bff/dist ./dist
+COPY --from=build /prod ./
 EXPOSE 3003
 
 ENTRYPOINT ["pnpm", "start"]
