@@ -1,8 +1,8 @@
-import { css } from "@mui/material-pigment-css";
+import { css } from '@mui/material-pigment-css';
 
 export const gridControls = css(() => ({
-  display: "flex",
-  alignItems: "center",
+  display: 'flex',
+  alignItems: 'center',
 }));
 
 export const root = css(() => ({

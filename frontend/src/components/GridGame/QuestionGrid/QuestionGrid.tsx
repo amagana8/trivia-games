@@ -1,14 +1,14 @@
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import { IconButton, TextField, Typography } from "@mui/material";
-import { produce } from "immer";
-import { useAtom, useAtomValue } from "jotai";
-import { FC, memo, useEffect } from "react";
-import { gridGameAtom } from "../../../atoms/gridGame";
-import { isEditingAtom } from "../../../atoms/isEditing";
-import { Column } from "./Column/Column";
-import * as styles from "./QuestionGrid.styles";
+import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import { IconButton, TextField, Typography } from '@mui/material';
+import { produce } from 'immer';
+import { useAtom, useAtomValue } from 'jotai';
+import { FC, memo, useEffect } from 'react';
+import { gridGameAtom } from '../../../atoms/gridGame';
+import { isEditingAtom } from '../../../atoms/isEditing';
+import { Column } from './Column/Column';
+import * as styles from './QuestionGrid.styles';
 
 export const QuestionGrid: FC = memo(() => {
   const [gridGame, setGridGame] = useAtom(gridGameAtom);
@@ -23,15 +23,12 @@ export const QuestionGrid: FC = memo(() => {
         setGridGame(
           produce((draft) => {
             if (origin) {
-              draft.grid[Number(origin.data.categoryIndex)].questions[
-                Number(origin.data.questionIndex)
-              ] = "";
+              draft.grid[Number(origin.data.categoryIndex)].questions[Number(origin.data.questionIndex)] = '';
             }
 
             if (destination) {
-              draft.grid[Number(destination.data.categoryIndex)].questions[
-                Number(destination.data.questionIndex)
-              ] = String(source.data.questionId);
+              draft.grid[Number(destination.data.categoryIndex)].questions[Number(destination.data.questionIndex)] =
+                String(source.data.questionId);
             }
           })
         );
@@ -58,14 +55,9 @@ export const QuestionGrid: FC = memo(() => {
           <Typography variant="h3">Title</Typography>
         )}
 
-        <div style={{ display: "flex", columnGap: "1rem" }}>
+        <div style={{ display: 'flex', columnGap: '1rem' }}>
           {gridGame.grid.map(({ category, questions }, index) => (
-            <Column
-              key={index}
-              category={category}
-              questions={questions}
-              categoryIndex={index}
-            />
+            <Column key={index} category={category} questions={questions} categoryIndex={index} />
           ))}
         </div>
       </div>
@@ -89,8 +81,8 @@ export const QuestionGrid: FC = memo(() => {
               setGridGame(
                 produce((draft) => {
                   draft.grid.push({
-                    category: "",
-                    questions: ["", "", "", "", ""],
+                    category: '',
+                    questions: ['', '', '', '', ''],
                   });
                 })
               )

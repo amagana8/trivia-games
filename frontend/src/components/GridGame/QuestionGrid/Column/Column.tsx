@@ -1,14 +1,14 @@
-import { IconButton, TextField, Typography } from "@mui/material";
-import { produce } from "immer";
-import { useAtomValue, useSetAtom } from "jotai";
-import { memo } from "react";
-import { gridGameAtom } from "../../../../atoms/gridGame";
-import { isEditingAtom } from "../../../../atoms/isEditing";
-import { QuestionCard } from "../../QuestionCard/QuestionCard";
-import { QuestionSlot } from "../QuestionSlot/QuestionSlot";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import * as styles from "./Column.styles";
+import { IconButton, TextField, Typography } from '@mui/material';
+import { produce } from 'immer';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { memo } from 'react';
+import { gridGameAtom } from '../../../../atoms/gridGame';
+import { isEditingAtom } from '../../../../atoms/isEditing';
+import { QuestionCard } from '../../QuestionCard/QuestionCard';
+import { QuestionSlot } from '../QuestionSlot/QuestionSlot';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import * as styles from './Column.styles';
 
 const Column: React.FC<{
   category: string;
@@ -38,11 +38,7 @@ const Column: React.FC<{
       )}
 
       {questions.map((questionId, index) => (
-        <QuestionSlot
-          key={index}
-          categoryIndex={categoryIndex}
-          questionIndex={index}
-        >
+        <QuestionSlot key={index} categoryIndex={categoryIndex} questionIndex={index}>
           {questionId ? (
             <QuestionCard questionId={questionId} />
           ) : (
@@ -68,7 +64,7 @@ const Column: React.FC<{
             onClick={() => {
               setGridGame(
                 produce((draft) => {
-                  draft.grid[categoryIndex].questions.push("");
+                  draft.grid[categoryIndex].questions.push('');
                 })
               );
             }}

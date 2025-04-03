@@ -1,6 +1,6 @@
-import { VisibilityOff, Visibility } from "@mui/icons-material";
-import { TextField, InputAdornment, IconButton } from "@mui/material";
-import { memo, useCallback, useState } from "react";
+import { VisibilityOff, Visibility } from '@mui/icons-material';
+import { TextField, InputAdornment, IconButton } from '@mui/material';
+import { memo, useCallback, useState } from 'react';
 
 export const PasswordInput = memo(() => {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,7 +12,7 @@ export const PasswordInput = memo(() => {
     <TextField
       placeholder="Password"
       name="password"
-      type={showPassword ? "text" : "password"}
+      type={showPassword ? 'text' : 'password'}
       slotProps={{
         input: {
           endAdornment: (

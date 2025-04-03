@@ -1,4 +1,4 @@
-import { css } from "@mui/material-pigment-css";
+import { css } from '@mui/material-pigment-css';
 
 export const root = css({
   display: 'grid',

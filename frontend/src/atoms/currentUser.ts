@@ -1,5 +1,5 @@
-import { trpc } from "../trpc";
-import { atomWithRefresh } from "jotai/utils";
+import { trpc } from '../trpc';
+import { atomWithRefresh } from 'jotai/utils';
 
 export const currentUserAtom = atomWithRefresh(async () => {
   try {

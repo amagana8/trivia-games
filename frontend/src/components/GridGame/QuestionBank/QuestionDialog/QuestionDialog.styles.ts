@@ -1,8 +1,8 @@
-import { css } from "@mui/material-pigment-css";
+import { css } from '@mui/material-pigment-css';
 
 export const dialogForm = css(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: 'flex',
+  flexDirection: 'column',
   gap: theme.spacing(1),
 }));
 

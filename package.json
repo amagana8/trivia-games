@@ -2,6 +2,9 @@
   "license": "UNLICENSED",
   "packageManager": "pnpm@10.7.0",
   "private": true,
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  },
   "scripts": {
     "bff": "pnpm --filter bff dev",
     "ui": "pnpm --filter trivia-games dev"
