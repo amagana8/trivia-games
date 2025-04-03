@@ -1,6 +1,11 @@
-import { atom } from "jotai";
+import { trpc } from "../trpc";
+import { atomWithRefresh } from "jotai/utils";
 
-export const currentUserAtom = atom<{
-  userId: string;
-  username: string;
-} | null>(null);
+export const currentUserAtom = atomWithRefresh(async () => {
+  try {
+    const currentUser = await trpc.user.getMe.query();
+    return currentUser;
+  } catch (error) {
+    return null;
+  }
+});

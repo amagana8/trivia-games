@@ -8,38 +8,31 @@ import { useNavigate } from "@tanstack/react-router";
 import { trpc } from "../../../trpc";
 
 export const LoginPage = memo(() => {
-  const setCurrentUser = useSetAtom(currentUserAtom);
+  const refreshCurrentUser = useSetAtom(currentUserAtom);
   const navigate = useNavigate();
 
-  const getMe = trpc.user.getMe.useQuery(undefined, { enabled: false });
-  const signIn = trpc.user.signIn.useMutation({
-    onError: (error) => alert(error.message),
-  });
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const formData = new FormData(e.currentTarget);
 
-  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-
-    signIn.mutate(
-      {
-        username: String(formData.get("username")),
-        password: String(formData.get("password")),
-      },
-      {
-        onSuccess: async () => {
-          const { data } = await getMe.refetch();
-          if (!data) return;
-
-          setCurrentUser({
-            userId: data.id,
-            username: data.username,
-          });
-
-          navigate({ to: "/" });
-        },
+      try {
+        await trpc.user.signIn.mutate({
+          username: String(formData.get("username")),
+          password: String(formData.get("password")),
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          alert(error.message);
+        }
+        return;
       }
-    );
-  }, []);
+
+      refreshCurrentUser();
+      navigate({ to: "/" });
+    },
+    []
+  );
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>

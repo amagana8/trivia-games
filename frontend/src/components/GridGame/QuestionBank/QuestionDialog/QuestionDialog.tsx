@@ -12,15 +12,41 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import React, { memo, useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import { trpc } from "../../../../trpc";
 import * as styles from "./QuestionDialog.styles";
 import { MediaType } from "../../../../../../bff/src/pb/question";
+import { useAtomValue } from "jotai";
+import { currentUserAtom } from "../../../../atoms/currentUser";
 
 export const QuestionDialog: React.FC<{ onClose: () => void }> = memo(
   ({ onClose }) => {
-    const createQuestion = trpc.question.createQuestion.useMutation();
     const [mediaType, setMediaType] = useState<MediaType>(MediaType.UNDEFINED);
+    const currentUser = useAtomValue(currentUserAtom);
+
+    const handleSubmit = useCallback(
+      async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if (!currentUser) {
+          return;
+        }
+
+        const formData = new FormData(e.currentTarget);
+        await trpc.question.createQuestion.mutate({
+          query: String(formData.get("query")),
+          answer: String(formData.get("answer")),
+          embed: {
+            url: String(formData.get("embedLink")),
+            type: mediaType,
+          },
+          authorId: currentUser.id,
+        });
+
+        onClose();
+      },
+      [currentUser?.id, mediaType, onClose]
+    );
 
     return (
       <Dialog
@@ -29,20 +55,7 @@ export const QuestionDialog: React.FC<{ onClose: () => void }> = memo(
         onClose={onClose}
         PaperProps={{
           component: "form",
-          onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            createQuestion.mutate({
-              query: String(formData.get("query")),
-              answer: String(formData.get("answer")),
-              embed: {
-                url: String(formData.get("embedLink")),
-                type: mediaType,
-              },
-              authorId: "672ae769cb6a1ba56cd5b7a6",
-            });
-            onClose();
-          },
+          onSubmit: handleSubmit,
         }}
       >
         <DialogTitle>New Question</DialogTitle>
@@ -52,32 +65,32 @@ export const QuestionDialog: React.FC<{ onClose: () => void }> = memo(
 
           <TextField placeholder="Answer" name="answer" />
 
-            <FormLabel>Embed</FormLabel>
+          <FormLabel>Embed</FormLabel>
 
-            <FormGroup row>
-              <FormControl>
-                <InputLabel>Media Type</InputLabel>
+          <FormGroup row>
+            <FormControl>
+              <InputLabel>Media Type</InputLabel>
 
-                <Select
-                  value={mediaType}
-                  label="Media Type"
-                  sx={{ width: "10em" }}
-                  onChange={(e) => setMediaType(e.target.value as MediaType)}
-                >
-                  <MenuItem value={MediaType.IMAGE}>Image</MenuItem>
+              <Select
+                value={mediaType}
+                label="Media Type"
+                sx={{ width: "10em" }}
+                onChange={(e) => setMediaType(e.target.value as MediaType)}
+              >
+                <MenuItem value={MediaType.IMAGE}>Image</MenuItem>
 
-                  <MenuItem value={MediaType.VIDEO}>Video</MenuItem>
+                <MenuItem value={MediaType.VIDEO}>Video</MenuItem>
 
-                  <MenuItem value={MediaType.AUDIO}>Audio</MenuItem>
-                </Select>
-              </FormControl>
+                <MenuItem value={MediaType.AUDIO}>Audio</MenuItem>
+              </Select>
+            </FormControl>
 
-              <TextField
-                placeholder="Embed Link"
-                name="embedLink"
-                className={styles.embedLinkInput}
-              />
-            </FormGroup>
+            <TextField
+              placeholder="Embed Link"
+              name="embedLink"
+              className={styles.embedLinkInput}
+            />
+          </FormGroup>
         </DialogContent>
 
         <DialogActions>

@@ -5,13 +5,11 @@ import {
   useEffect,
   useRef,
   useState,
-  type FC,
-  type ReactNode,
 } from "react";
 import * as styles from "./QuestionSlot.styles";
 
-export const QuestionSlot: FC<{
-  children: ReactNode;
+export const QuestionSlot: React.FC<{
+  children: React.ReactNode;
   categoryIndex: number;
   questionIndex: number;
 }> = memo(({ children, categoryIndex, questionIndex }) => {

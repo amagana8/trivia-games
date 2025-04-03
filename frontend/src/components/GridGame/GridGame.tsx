@@ -1,62 +1,61 @@
 import { Button, List, ListItem } from "@mui/material";
-import { useAtom, useSetAtom } from "jotai";
-import { FC, useState } from "react";
-import { gridGameAtom } from "../../atoms/gridGame";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { FC, Suspense, useCallback, useState } from "react";
+import { allGridGamesQueryAtom, gridGameAtom } from "../../atoms/gridGame";
 import { isEditingAtom } from "../../atoms/isEditing";
 import { trpc } from "../../trpc";
 import * as styles from "./GridGame.styles";
 import { QuestionBank } from "./QuestionBank/QuestionBank";
 import { QuestionGrid } from "./QuestionGrid/QuestionGrid";
+import { currentUserAtom } from "../../atoms/currentUser";
 
 export const GridGame: FC = () => {
   const setGridGame = useSetAtom(gridGameAtom);
   const [isEditing, setIsEditing] = useAtom(isEditingAtom);
   const [showList, setShowList] = useState(false);
-  const createGridGame = trpc.gridGame.createGridGame.useMutation({
-    onSuccess: (data) => {
-      setGridGame({ title: data.title, grid: data.grid, id: data.id });
-      setIsEditing(true);
-    },
-  });
-  const { data } = trpc.gridGame.getAllGridGames.useQuery(undefined, {
-    enabled: showList,
-  });
-  const updateGridGame = trpc.gridGame.updateGridGame.useMutation();
-  
+  const allgridGames = useAtomValue(allGridGamesQueryAtom);
+  const gridGameState = useAtomValue(gridGameAtom);
+  const currentUser = useAtomValue(currentUserAtom);
+
+  const handleCreateGridGame = useCallback(async () => {
+    setIsEditing(true);
+    
+    if (!currentUser) {
+      return;
+    }
+
+    await trpc.gridGame.createGridGame.mutate({
+      authorId: currentUser.id,
+      title: "",
+      grid: [],
+    });
+  }, [currentUser?.id]);
 
   if (!isEditing) {
     return (
       <div>
-        <Button
-          onClick={() => {
-            createGridGame.mutate({
-              authorId: "672ae769cb6a1ba56cd5b7a6", //TODO: replace this with the actual authorId when user service is ready
-              title: "",
-              grid: [],
-            });
-          }}
-        >
-          Create New Game
-        </Button>
+        <Button onClick={handleCreateGridGame}>Create New Game</Button>
         <Button onClick={() => setShowList(true)}>Edit Game</Button>
         {showList && (
-          <List>
-            {data?.gridGames.map((gridGame) => (
-              <ListItem
-                key={gridGame.id}
-                onClick={() => {
-                  setIsEditing(true);
-                  setGridGame({
-                    id: gridGame.id,
-                    title: gridGame.title,
-                    grid: gridGame.grid,
-                  });
-                }}
-              >
-                {gridGame.title}
-              </ListItem>
-            ))}
-          </List>
+          <Suspense fallback={<div>Loading...</div>}>
+            <List>
+              {allgridGames.gridGames.map((gridGame) => (
+                <ListItem
+                  key={gridGame.id}
+                  onClick={() => {
+                    setIsEditing(true);
+                    setGridGame({
+                      id: gridGame.id,
+                      title: gridGame.title,
+                      grid: gridGame.grid,
+                    });
+                  }}
+                >
+                  {gridGame.title}
+                </ListItem>
+              ))}
+            </List>
+          </Suspense>
         )}
       </div>
     );
@@ -71,7 +70,7 @@ export const GridGame: FC = () => {
       <div className={styles.footer}>
         <Button
           variant="contained"
-          onClick={() => updateGridGame.mutate({} as any)}
+          onClick={() => trpc.gridGame.updateGridGame.mutate(gridGameState)}
         >
           Save
         </Button>

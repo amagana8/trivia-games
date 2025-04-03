@@ -1,7 +1,7 @@
 import { IconButton, TextField, Typography } from "@mui/material";
 import { produce } from "immer";
 import { useAtomValue, useSetAtom } from "jotai";
-import { memo, type FC } from "react";
+import { memo } from "react";
 import { gridGameAtom } from "../../../../atoms/gridGame";
 import { isEditingAtom } from "../../../../atoms/isEditing";
 import { QuestionCard } from "../../QuestionCard/QuestionCard";
@@ -10,7 +10,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import * as styles from "./Column.styles";
 
-const Column: FC<{
+const Column: React.FC<{
   category: string;
   questions: string[];
   categoryIndex: number;

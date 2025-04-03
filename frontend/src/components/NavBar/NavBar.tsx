@@ -7,7 +7,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { FC, memo, useCallback, useRef, useState } from "react";
+import { FC, memo, Suspense, useCallback, useRef, useState } from "react";
 import * as styles from "./NavBar.styles";
 import { useAtom } from "jotai";
 import { currentUserAtom } from "../../atoms/currentUser";
@@ -26,18 +26,14 @@ export const NavBar: FC = memo(() => {
     setMenuOpen(false);
   }, []);
 
-  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
+  const [currentUser, refreshCurrentUser] = useAtom(currentUserAtom);
 
   const navigate = useNavigate();
 
-  const signOut = trpc.user.signOut.useMutation({
-    onSuccess: () => {
-      setCurrentUser(null);
-      navigate({ to: "/" });
-    },
-  });
-  const handleLogout = useCallback(() => {
-    signOut.mutate();
+  const handleLogout = useCallback(async () => {
+    await trpc.user.signOut.mutate();
+    refreshCurrentUser();
+    navigate({ to: "/" });
     closeMenu();
   }, []);
 
@@ -49,9 +45,11 @@ export const NavBar: FC = memo(() => {
         </Typography>
 
         {currentUser ? (
+          <Suspense fallback={<div>Loading...</div>}>
           <IconButton ref={accountButtonRef} onClick={openMenu}>
             <AccountCircle />
           </IconButton>
+          </Suspense>
         ) : (
           <div>
             <Button onClick={() => navigate({ to: "/login" })}>Login</Button>

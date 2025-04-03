@@ -1,46 +1,26 @@
 import Add from "@mui/icons-material/Add";
-import {
-  Button,
-  Typography
-} from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
-import { FC, memo, useMemo, useState } from "react";
-import { usedQuestionsAtom } from "../../../atoms/gridGame";
-import { trpc } from "../../../trpc";
+import { FC, memo, Suspense, useState } from "react";
 import { QuestionCard } from "../QuestionCard/QuestionCard";
 import * as styles from "./QuestionBank.styles";
 import { QuestionDialog } from "./QuestionDialog/QuestionDialog";
+import { availableQuestionsAtom } from "../../../atoms/questions";
 
 export const QuestionBank: FC = memo(() => {
-  const { data, isPending, isError } = trpc.question.getAllQuestions.useQuery();
-  const usedQuestions = useAtomValue(usedQuestionsAtom);
+  const availableQuestions = useAtomValue(availableQuestionsAtom);
   const [isOpen, setIsOpen] = useState(false);
-
-  const availableQuestions = useMemo(() => {
-    if (!data) {
-      return [];
-    }
-    return Object.keys(data.questionMap).filter(
-      (questionId) => !usedQuestions.has(questionId)
-    );
-  }, [data?.questionMap, usedQuestions]);
-
-  if (isPending) {
-    return <Typography>Loading...</Typography>;
-  }
-
-  if (isError) {
-    return <Typography>Error occured</Typography>;
-  }
 
   return (
     <aside className={styles.sidebar}>
       <Typography variant="h4">Questions</Typography>
 
       <div className={styles.list}>
+        <Suspense fallback={<div>Loading...</div>}>
         {availableQuestions.map((questionId) => (
           <QuestionCard questionId={questionId} key={questionId} />
         ))}
+        </Suspense>
       </div>
 
       <Button
