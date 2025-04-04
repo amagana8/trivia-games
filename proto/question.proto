@@ -15,7 +15,7 @@ service QuestionService {
 message CreateQuestionRequest {
     string authorId = 1;
     string query = 2;
-    string answer = 3; 
+    string answer = 3;
     Media embed = 4;
 }
 

@@ -9,7 +9,7 @@ RUN corepack enable
 
 FROM base AS build
 # get protobuf compiler
-RUN apt-get update && \ 
+RUN apt-get update && \
     apt-get install -y protobuf-compiler
 
 # copy source code

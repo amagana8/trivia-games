@@ -1,7 +1,7 @@
 FROM golang:1.23.2 AS build
 
 # get protobuf compiler and go plugins
-RUN apt-get update && \ 
+RUN apt-get update && \
     apt-get install -y protobuf-compiler
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
