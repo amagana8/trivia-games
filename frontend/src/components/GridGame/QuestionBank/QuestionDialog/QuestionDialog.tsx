@@ -44,7 +44,7 @@ export const QuestionDialog: React.FC<{ onClose: () => void }> = memo(({ onClose
 
       onClose();
     },
-    [currentUser?.id, mediaType, onClose]
+    [currentUser, mediaType, onClose]
   );
 
   return (

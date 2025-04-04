@@ -22,7 +22,7 @@ export const QuestionCard: React.FC<{ questionId: string }> = memo(({ questionId
       onDragStart: () => setDragging(true),
       onDrop: () => setDragging(false),
     });
-  }, []);
+  }, [questionId]);
 
   return (
     <Card ref={ref} sx={{ opacity: dragging ? 0.5 : 1 }} className={styles.card}>

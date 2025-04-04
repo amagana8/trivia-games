@@ -24,7 +24,7 @@ export const QuestionSlot: React.FC<{
       onDragLeave: () => setIsDraggedOver(false),
       onDrop: () => setIsDraggedOver(false),
     });
-  }, []);
+  }, [categoryIndex, questionIndex]);
 
   return (
     <Paper
