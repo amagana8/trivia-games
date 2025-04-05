@@ -8,7 +8,7 @@ export const trpc = createTRPCClient<AppRouter>({
       fetch(url, options) {
         return fetch(url, { ...options, credentials: 'include' });
       },
-      url: 'http://localhost:3003/trpc',
+      url: `${import.meta.env.VITE_BFF_URL}/trpc`,
     }),
   ],
 });
