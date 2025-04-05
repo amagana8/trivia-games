@@ -7,9 +7,8 @@ export const column = css(({ theme }) => ({
   width: '12em',
 }));
 
-// TODO: fix when MUI fixes type
-export const controls = css(({}) => ({
-  display: 'flex',
+export const controls = css({
   alignItems: 'center',
+  display: 'flex',
   flexDirection: 'column',
-}));
+});

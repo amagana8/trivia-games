@@ -1,9 +1,9 @@
 import { css } from '@mui/material-pigment-css';
 
 export const sidebar = css(({ theme }) => ({
-  gridArea: 'sidebar',
   display: 'flex',
   flexDirection: 'column',
+  gridArea: 'sidebar',
   paddingLeft: theme.spacing(1),
 }));
 

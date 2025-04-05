@@ -5,6 +5,7 @@ import { IconButton, TextField, Typography } from '@mui/material';
 import { produce } from 'immer';
 import { useAtom, useAtomValue } from 'jotai';
 import { FC, memo, useEffect } from 'react';
+
 import { gridGameAtom } from '../../../atoms/gridGame';
 import { isEditingAtom } from '../../../atoms/isEditing';
 import { Column } from './Column/Column';
@@ -55,7 +56,7 @@ export const QuestionGrid: FC = memo(() => {
           <Typography variant="h3">Title</Typography>
         )}
 
-        <div style={{ display: 'flex', columnGap: '1rem' }}>
+        <div style={{ columnGap: '1rem', display: 'flex' }}>
           {gridGame.grid.map(({ category, questions }, index) => (
             <Column key={index} category={category} questions={questions} categoryIndex={index} />
           ))}

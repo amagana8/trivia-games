@@ -1,7 +1,8 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { theme } from './src/theme';
 import { pigment } from '@pigment-css/vite-plugin';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+
+import { theme } from './src/theme';
 
 const pigmentConfig = {
   theme,

@@ -1,13 +1,14 @@
 import { Button, List, ListItem } from '@mui/material';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { FC, Suspense, useCallback, useState } from 'react';
+
+import { currentUserAtom } from '../../atoms/currentUser';
 import { allGridGamesQueryAtom, gridGameAtom } from '../../atoms/gridGame';
 import { isEditingAtom } from '../../atoms/isEditing';
 import { trpc } from '../../trpc';
 import * as styles from './GridGame.styles';
 import { QuestionBank } from './QuestionBank/QuestionBank';
 import { QuestionGrid } from './QuestionGrid/QuestionGrid';
-import { currentUserAtom } from '../../atoms/currentUser';
 
 export const GridGame: FC = () => {
   const setGridGame = useSetAtom(gridGameAtom);
@@ -26,8 +27,8 @@ export const GridGame: FC = () => {
 
     await trpc.gridGame.createGridGame.mutate({
       authorId: currentUser.id,
-      title: '',
       grid: [],
+      title: '',
     });
   }, [currentUser?.id]);
 
@@ -45,9 +46,9 @@ export const GridGame: FC = () => {
                   onClick={() => {
                     setIsEditing(true);
                     setGridGame({
+                      grid: gridGame.grid,
                       id: gridGame.id,
                       title: gridGame.title,
-                      grid: gridGame.grid,
                     });
                   }}
                 >

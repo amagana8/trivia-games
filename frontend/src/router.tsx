@@ -1,31 +1,32 @@
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
+
+import { LoginPage } from './components/auth/LoginPage/LoginPage';
+import { SignUpPage } from './components/auth/SignUpPage/SignUpPage';
 import { GridGame } from './components/GridGame/GridGame';
 import { Root } from './components/Root/Root';
-import { SignUpPage } from './components/auth/SignUpPage/SignUpPage';
-import { LoginPage } from './components/auth/LoginPage/LoginPage';
 
 const rootRoute = createRootRoute({
   component: () => <Root />,
 });
 
 const indexRoute = createRoute({
+  component: GridGame,
   getParentRoute: () => rootRoute,
   path: '/',
-  component: GridGame,
 });
 
 const signUpRoute = createRoute({
+  component: () => <SignUpPage />,
   getParentRoute: () => rootRoute,
   path: '/sign-up',
-  component: () => <SignUpPage />,
 });
 
 const loginRoute = createRoute({
+  component: () => <LoginPage />,
   getParentRoute: () => rootRoute,
   path: '/login',
-  component: () => <LoginPage />,
 });
 
 const routeTree = rootRoute.addChildren([indexRoute, signUpRoute, loginRoute]);
 
-export const router = createRouter({ routeTree, defaultPreload: 'intent' });
+export const router = createRouter({ defaultPreload: 'intent', routeTree });

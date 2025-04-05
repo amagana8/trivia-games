@@ -1,9 +1,10 @@
 import { draggable } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { Card, CardContent } from '@mui/material';
-import { memo, Suspense, useEffect, useRef, useState } from 'react';
-import * as styles from './QuestionCard.styles';
 import { useAtomValue } from 'jotai';
+import { memo, Suspense, useEffect, useRef, useState } from 'react';
+
 import { questionAtom } from '../../../atoms/questions';
+import * as styles from './QuestionCard.styles';
 
 export const QuestionCard: React.FC<{ questionId: string }> = memo(({ questionId }) => {
   const ref = useRef<HTMLDivElement>(null);

@@ -1,5 +1,5 @@
-import { VisibilityOff, Visibility } from '@mui/icons-material';
-import { TextField, InputAdornment, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { IconButton, InputAdornment, TextField } from '@mui/material';
 import { memo, useCallback, useState } from 'react';
 
 export const PasswordInput = memo(() => {

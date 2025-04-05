@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
+
 import { trpc } from '../trpc';
 import { gridGameAtom } from './gridGame';
 

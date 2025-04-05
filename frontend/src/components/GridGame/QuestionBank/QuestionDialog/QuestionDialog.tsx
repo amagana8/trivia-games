@@ -12,12 +12,13 @@ import {
   Select,
   TextField,
 } from '@mui/material';
+import { useAtomValue } from 'jotai';
 import React, { memo, useCallback, useState } from 'react';
+
+import { MediaType } from '../../../../../../bff/src/pb/question';
+import { currentUserAtom } from '../../../../atoms/currentUser';
 import { trpc } from '../../../../trpc';
 import * as styles from './QuestionDialog.styles';
-import { MediaType } from '../../../../../../bff/src/pb/question';
-import { useAtomValue } from 'jotai';
-import { currentUserAtom } from '../../../../atoms/currentUser';
 
 export const QuestionDialog: React.FC<{ onClose: () => void }> = memo(({ onClose }) => {
   const [mediaType, setMediaType] = useState<MediaType>(MediaType.UNDEFINED);
@@ -33,13 +34,13 @@ export const QuestionDialog: React.FC<{ onClose: () => void }> = memo(({ onClose
 
       const formData = new FormData(e.currentTarget);
       await trpc.question.createQuestion.mutate({
-        query: String(formData.get('query')),
         answer: String(formData.get('answer')),
-        embed: {
-          url: String(formData.get('embedLink')),
-          type: mediaType,
-        },
         authorId: currentUser.id,
+        embed: {
+          type: mediaType,
+          url: String(formData.get('embedLink')),
+        },
+        query: String(formData.get('query')),
       });
 
       onClose();

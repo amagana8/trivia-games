@@ -1,6 +1,7 @@
 import { dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { Paper } from '@mui/material';
 import { memo, useEffect, useRef, useState } from 'react';
+
 import * as styles from './QuestionSlot.styles';
 
 export const QuestionSlot: React.FC<{

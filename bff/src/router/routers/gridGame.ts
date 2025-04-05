@@ -1,7 +1,8 @@
-import { z } from 'zod';
-import { publicProcedure, router } from '../../router/trpc.js';
 import { createChannel, createClient } from 'nice-grpc';
+import { z } from 'zod';
+
 import { GridGameServiceClient, GridGameServiceDefinition } from '../../pb/gridGame.js';
+import { publicProcedure, router } from '../../router/trpc.js';
 
 const channel = createChannel(process.env.GAME_SERVICE_URL ?? 'localhost:3002');
 const gridGameService: GridGameServiceClient = createClient(GridGameServiceDefinition, channel);
@@ -13,23 +14,23 @@ export const gridGameRouter = router({
     .input(
       z.object({
         authorId: z.string(),
-        title: z.string(),
         grid: gridValidator,
+        title: z.string(),
       })
     )
     .mutation(({ input }) => gridGameService.createGridGame(input)),
+  deleteGridGame: publicProcedure.query(() => gridGameService.deleteGridGame({})),
+  getAllGridGames: publicProcedure.query(() => gridGameService.getAllGridGames({})),
   getGridGame: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input }) => gridGameService.getGridGame(input)),
-  getAllGridGames: publicProcedure.query(() => gridGameService.getAllGridGames({})),
   updateGridGame: publicProcedure
     .input(
       z.object({
+        grid: gridValidator,
         id: z.string(),
         title: z.string(),
-        grid: gridValidator,
       })
     )
     .mutation(({ input }) => gridGameService.updateGridGame(input)),
-  deleteGridGame: publicProcedure.query(() => gridGameService.deleteGridGame({})),
 });

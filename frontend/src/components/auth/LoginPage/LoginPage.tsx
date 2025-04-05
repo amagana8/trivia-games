@@ -1,11 +1,12 @@
 import { Button, TextField } from '@mui/material';
-import { memo, useCallback } from 'react';
-import { PasswordInput } from '../PasswordInput/PasswordInput';
-import * as styles from '../AuthPage.styles';
-import { useSetAtom } from 'jotai';
-import { currentUserAtom } from '../../../atoms/currentUser';
 import { useNavigate } from '@tanstack/react-router';
+import { useSetAtom } from 'jotai';
+import { memo, useCallback } from 'react';
+
+import { currentUserAtom } from '../../../atoms/currentUser';
 import { trpc } from '../../../trpc';
+import * as styles from '../AuthPage.styles';
+import { PasswordInput } from '../PasswordInput/PasswordInput';
 
 export const LoginPage = memo(() => {
   const refreshCurrentUser = useSetAtom(currentUserAtom);
@@ -17,8 +18,8 @@ export const LoginPage = memo(() => {
 
     try {
       await trpc.user.signIn.mutate({
-        username: String(formData.get('username')),
         password: String(formData.get('password')),
+        username: String(formData.get('username')),
       });
     } catch (error) {
       if (error instanceof Error) {

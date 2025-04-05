@@ -16,12 +16,12 @@ declare module '@pigment-css/react/theme' {
 }
 
 export const theme = createTheme({
+  colorSchemes: { dark: true, light: true },
   cssVariables: { colorSchemeSelector: 'data' },
   defaultColorScheme: 'dark',
-  colorSchemes: { light: true, dark: true },
-  spacing: 12,
   palette: {
     primary: cyan,
     secondary: yellow,
   },
+  spacing: 12,
 });

@@ -2,10 +2,10 @@ import { FastifyReply } from 'fastify';
 
 export const sendAccessToken = (reply: FastifyReply, accessToken: string) => {
   reply.setCookie('accessToken', accessToken, {
-    maxAge: 60 * 15,
     httpOnly: true,
+    maxAge: 60 * 15,
     path: '/',
-    signed: true,
     sameSite: 'strict',
+    signed: true,
   });
 };

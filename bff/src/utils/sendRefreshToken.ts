@@ -2,10 +2,10 @@ import { FastifyReply } from 'fastify';
 
 export const sendRefreshToken = (reply: FastifyReply, refreshToken: string) => {
   reply.setCookie('refreshToken', refreshToken, {
-    maxAge: 60 * 60 * 24 * 7,
     httpOnly: true,
+    maxAge: 60 * 60 * 24 * 7,
     path: '/trpc/user.refreshToken',
-    signed: true,
     sameSite: 'strict',
+    signed: true,
   });
 };

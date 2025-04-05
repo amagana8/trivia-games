@@ -2,10 +2,11 @@ import { Button, TextField } from '@mui/material';
 import { useNavigate } from '@tanstack/react-router';
 import { useSetAtom } from 'jotai';
 import { FC, memo, useCallback } from 'react';
+
 import { currentUserAtom } from '../../../atoms/currentUser';
 import { trpc } from '../../../trpc';
-import { PasswordInput } from '../PasswordInput/PasswordInput';
 import * as styles from '../AuthPage.styles';
+import { PasswordInput } from '../PasswordInput/PasswordInput';
 
 export const SignUpPage: FC = memo(() => {
   const refreshCurrentUser = useSetAtom(currentUserAtom);
@@ -18,9 +19,9 @@ export const SignUpPage: FC = memo(() => {
 
     try {
       await trpc.user.signUp.mutate({
-        username: String(formData.get('username')),
         email: String(formData.get('email')),
         password: String(formData.get('password')),
+        username: String(formData.get('username')),
       });
     } catch (error) {
       if (error instanceof Error) {
