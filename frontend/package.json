@@ -16,6 +16,7 @@
     "@mui/material-pigment-css": "^7.0.1",
     "@tanstack/react-router": "^1.79.0",
     "@trpc/client": "^11.0.1",
+    "clsx": "^2.1.1",
     "immer": "^10.1.1",
     "jotai": "^2.10.3",
     "react": "^18.3.1",

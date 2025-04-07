@@ -11,3 +11,12 @@ export const navBar = css(({ theme }) => ({
 export const title = css({
   flex: 1,
 });
+
+export const buttons = css({
+  marginLeft: 'auto',
+});
+
+export const logo = css(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius,
+  padding: theme.spacing(0.5),
+}));

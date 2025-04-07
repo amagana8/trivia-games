@@ -1,5 +1,5 @@
 import { AccountCircle } from '@mui/icons-material';
-import { Button, IconButton, Menu, MenuItem, Paper, Typography } from '@mui/material';
+import { Button, ButtonBase, IconButton, Menu, MenuItem, Paper, Typography } from '@mui/material';
 import { useNavigate } from '@tanstack/react-router';
 import { useAtom } from 'jotai';
 import { FC, memo, Suspense, useCallback, useRef, useState } from 'react';
@@ -34,37 +34,37 @@ export const NavBar: FC = memo(() => {
   return (
     <>
       <Paper className={styles.navBar}>
-        <Typography variant="h6" className={styles.title}>
-          Trivia Games
-        </Typography>
+        <ButtonBase onClick={() => navigate({ to: '/' })} className={styles.logo}>
+          <Typography variant="h6">Trivia Games</Typography>
+        </ButtonBase>
 
-        {currentUser ? (
-          <Suspense fallback={<div>Loading...</div>}>
-            <IconButton ref={accountButtonRef} onClick={openMenu}>
-              <AccountCircle />
-            </IconButton>
-          </Suspense>
-        ) : (
-          <div>
-            <Button onClick={() => navigate({ to: '/login' })}>Login</Button>
+        <div className={styles.buttons}>
+          {currentUser ? (
+            <Suspense fallback={<div>Loading...</div>}>
+              <IconButton ref={accountButtonRef} onClick={openMenu}>
+                <AccountCircle />
+              </IconButton>
+            </Suspense>
+          ) : (
+            <>
+              <Button onClick={() => navigate({ to: '/login' })}>Login</Button>
 
-            <Button
-              variant="contained"
-              onClick={() =>
-                navigate({
-                  to: '/sign-up',
-                })
-              }
-            >
-              Sign Up
-            </Button>
-          </div>
-        )}
+              <Button
+                variant="contained"
+                onClick={() =>
+                  navigate({
+                    to: '/sign-up',
+                  })
+                }
+              >
+                Sign Up
+              </Button>
+            </>
+          )}
+        </div>
       </Paper>
 
       <Menu anchorEl={accountButtonRef.current} open={menuOpen} onClose={closeMenu}>
-        <MenuItem>Profile</MenuItem>
-
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </>

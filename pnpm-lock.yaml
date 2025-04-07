@@ -96,6 +96,9 @@ importers:
       '@trpc/client':
         specifier: ^11.0.1
         version: 11.0.1(@trpc/server@11.0.1(typescript@5.8.2))(typescript@5.8.2)
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       immer:
         specifier: ^10.1.1
         version: 10.1.1

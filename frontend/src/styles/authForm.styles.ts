@@ -1,6 +1,6 @@
 import { css } from '@mui/material-pigment-css';
 
-export const form = css({
+export const authFormStyles = css({
   '> div': {
     width: '20em',
   },

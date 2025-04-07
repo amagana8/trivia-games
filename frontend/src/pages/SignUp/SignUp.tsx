@@ -1,14 +1,14 @@
 import { Button, TextField } from '@mui/material';
 import { useNavigate } from '@tanstack/react-router';
 import { useSetAtom } from 'jotai';
-import { FC, memo, useCallback } from 'react';
+import { memo, useCallback } from 'react';
 
-import { currentUserAtom } from '../../../atoms/currentUser';
-import { trpc } from '../../../trpc';
-import * as styles from '../AuthPage.styles';
-import { PasswordInput } from '../PasswordInput/PasswordInput';
+import { currentUserAtom } from '../../atoms/currentUser';
+import { PasswordInput } from '../../components/PasswordInput/PasswordInput';
+import { authFormStyles } from '../../styles/authForm.styles';
+import { trpc } from '../../trpc';
 
-export const SignUpPage: FC = memo(() => {
+export const SignUp: React.FC = memo(() => {
   const refreshCurrentUser = useSetAtom(currentUserAtom);
 
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ export const SignUpPage: FC = memo(() => {
   }, []);
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form className={authFormStyles} onSubmit={handleSubmit}>
       <TextField placeholder="Email" name="email" />
 
       <TextField placeholder="Username" name="username" />

@@ -1,3 +1,4 @@
+import { Add, Edit } from '@mui/icons-material';
 import { Button, List, ListItem } from '@mui/material';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { FC, Suspense, useCallback, useState } from 'react';
@@ -5,10 +6,11 @@ import { FC, Suspense, useCallback, useState } from 'react';
 import { currentUserAtom } from '../../atoms/currentUser';
 import { allGridGamesQueryAtom, gridGameAtom } from '../../atoms/gridGame';
 import { isEditingAtom } from '../../atoms/isEditing';
+import { QuestionBank } from '../../components/GridGame/QuestionBank/QuestionBank';
+import { QuestionGrid } from '../../components/GridGame/QuestionGrid/QuestionGrid';
+import { MenuButton } from '../../components/MenuButton/MenuButton';
 import { trpc } from '../../trpc';
 import * as styles from './GridGame.styles';
-import { QuestionBank } from './QuestionBank/QuestionBank';
-import { QuestionGrid } from './QuestionGrid/QuestionGrid';
 
 export const GridGame: FC = () => {
   const setGridGame = useSetAtom(gridGameAtom);
@@ -34,9 +36,9 @@ export const GridGame: FC = () => {
 
   if (!isEditing) {
     return (
-      <div>
-        <Button onClick={handleCreateGridGame}>Create New Game</Button>
-        <Button onClick={() => setShowList(true)}>Edit Game</Button>
+      <div className={styles.gridGameSelect}>
+        <MenuButton onClick={handleCreateGridGame} label="New" icon={<Add />} />
+        <MenuButton onClick={() => setShowList(true)} label="Edit" icon={<Edit />} />
         {showList && (
           <Suspense fallback={<div>Loading...</div>}>
             <List>

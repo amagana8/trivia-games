@@ -1,10 +1,10 @@
 import { Outlet } from '@tanstack/react-router';
-import { FC, memo } from 'react';
+import { memo } from 'react';
 
-import { NavBar } from '../NavBar/NavBar';
+import { NavBar } from '../../components/NavBar/NavBar';
 import * as styles from './Root.styles';
 
-export const Root: FC = memo(() => {
+export const Root: React.FC = memo(() => {
   return (
     <div className={styles.root}>
       <NavBar />
