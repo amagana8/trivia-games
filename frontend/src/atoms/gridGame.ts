@@ -5,4 +5,8 @@ import { trpc } from '../trpc';
 
 export const allGridGamesQueryAtom = atom(() => trpc.gridGame.getAllGridGames.query());
 
-export const gridGameAtom = atom<{ id: string; title: string; grid: Column[] }>({ grid: [], id: '', title: '' });
+export const gridGameAtom = atom<{ id: string; title: string; grid: Column[] }>({
+  grid: [{ category: '', questions: ['', '', '', '', ''] }],
+  id: '',
+  title: '',
+});
