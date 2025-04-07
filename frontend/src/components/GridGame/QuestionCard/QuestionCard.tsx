@@ -10,6 +10,7 @@ export const QuestionCard: React.FC<{ questionId: string }> = memo(({ questionId
   const ref = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const question = useAtomValue(questionAtom(questionId));
+  const [flipped, setFlipped] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -26,10 +27,19 @@ export const QuestionCard: React.FC<{ questionId: string }> = memo(({ questionId
   }, [questionId]);
 
   return (
-    <Card ref={ref} sx={{ opacity: dragging ? 0.5 : 1 }} className={styles.card}>
-      <Suspense fallback={<div>Loading...</div>}>
-        <CardContent>{question.query}</CardContent>
-      </Suspense>
-    </Card>
+    <>
+      <Card
+        ref={ref}
+        sx={[{ opacity: dragging ? 0.5 : 1 }, flipped && { transform: 'rotateY(180deg)' }]}
+        className={styles.card}
+        onClick={() => setFlipped((prev) => !prev)}
+      >
+        <Suspense fallback={<div>Loading...</div>}>
+          <CardContent>{question.query}</CardContent>
+
+          <CardContent className={styles.back}>{question.answer}</CardContent>
+        </Suspense>
+      </Card>
+    </>
   );
 });
