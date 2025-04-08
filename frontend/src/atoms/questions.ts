@@ -10,13 +10,14 @@ export const availableQuestionsAtom = atom(async (get) => {
   const allQuestions = await get(allQuestionsQueryAtom);
   const currentGridGameState = get(gridGameAtom);
 
+  const availableQuestions = { ...allQuestions.questionMap };
   currentGridGameState.grid
     .flatMap(({ questions }) => questions)
     .forEach((questionId) => {
-      delete allQuestions.questionMap[questionId];
+      delete availableQuestions[questionId];
     });
 
-  return Object.keys(allQuestions.questionMap);
+  return Object.keys(availableQuestions);
 });
 
 export const questionAtom = atomFamily((id: string) =>
