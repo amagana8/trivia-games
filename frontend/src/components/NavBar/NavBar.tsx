@@ -2,13 +2,13 @@ import { AccountCircle } from '@mui/icons-material';
 import { Button, ButtonBase, IconButton, Menu, MenuItem, Paper, Typography } from '@mui/material';
 import { useNavigate } from '@tanstack/react-router';
 import { useAtom } from 'jotai';
-import { FC, memo, Suspense, useRef, useState } from 'react';
+import { memo, Suspense, useRef, useState } from 'react';
 
 import { currentUserAtom } from '../../atoms/currentUser';
 import { trpc } from '../../trpc';
 import * as styles from './NavBar.styles';
 
-export const NavBar: FC = memo(() => {
+export const NavBar: React.FC = memo(() => {
   const accountButtonRef = useRef<HTMLButtonElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 

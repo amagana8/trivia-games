@@ -1,14 +1,15 @@
 import { dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { Paper } from '@mui/material';
-import { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 
 import * as styles from './QuestionSlot.styles';
 
-export const QuestionSlot: React.FC<{
-  children: React.ReactNode;
-  categoryIndex: number;
-  questionIndex: number;
-}> = memo(({ children, categoryIndex, questionIndex }) => {
+export const QuestionSlot: React.FC<
+  React.PropsWithChildren<{
+    categoryIndex: number;
+    questionIndex: number;
+  }>
+> = memo(({ children, categoryIndex, questionIndex }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isDraggedOver, setIsDraggedOver] = useState(false);
 

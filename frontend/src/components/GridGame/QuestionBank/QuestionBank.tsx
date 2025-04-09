@@ -1,14 +1,14 @@
 import Add from '@mui/icons-material/Add';
 import { Button, Typography } from '@mui/material';
 import { useAtomValue } from 'jotai';
-import { FC, memo, Suspense, useCallback, useState } from 'react';
+import { memo, Suspense, useCallback, useState } from 'react';
 
 import { availableQuestionsAtom } from '../../../atoms/questions';
 import { QuestionCard } from '../QuestionCard/QuestionCard';
 import * as styles from './QuestionBank.styles';
 import { QuestionDialog } from './QuestionDialog/QuestionDialog';
 
-export const QuestionBank: FC = memo(() => {
+export const QuestionBank: React.FC = memo(() => {
   const availableQuestions = useAtomValue(availableQuestionsAtom);
   const [isOpen, setIsOpen] = useState(false);
 

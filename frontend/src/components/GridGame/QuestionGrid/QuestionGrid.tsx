@@ -4,14 +4,14 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { IconButton, TextField, Typography } from '@mui/material';
 import { produce } from 'immer';
 import { useAtom, useAtomValue } from 'jotai';
-import { FC, memo, useEffect } from 'react';
+import { memo, useEffect } from 'react';
 
 import { gridGameAtom } from '../../../atoms/gridGame';
 import { isEditingAtom } from '../../../atoms/isEditing';
 import { Column } from './Column/Column';
 import * as styles from './QuestionGrid.styles';
 
-export const QuestionGrid: FC = memo(() => {
+export const QuestionGrid: React.FC = memo(() => {
   const [gridGame, setGridGame] = useAtom(gridGameAtom);
   const isEditing = useAtomValue(isEditingAtom);
 
