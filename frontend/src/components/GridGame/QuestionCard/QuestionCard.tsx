@@ -5,6 +5,7 @@ import { memo, Suspense, useEffect, useRef, useState } from 'react';
 
 import { questionAtom } from '../../../atoms/questions';
 import * as styles from './QuestionCard.styles';
+import { QuestionMedia } from './QuestionMedia/QuestionMedia';
 
 export const QuestionCard: React.FC<{ questionId: string }> = memo(({ questionId }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -35,6 +36,8 @@ export const QuestionCard: React.FC<{ questionId: string }> = memo(({ questionId
         onClick={() => setFlipped((prev) => !prev)}
       >
         <Suspense fallback={<div>Loading...</div>}>
+          {question.embed && <QuestionMedia media={question.embed} />}
+
           <CardContent>{question.query}</CardContent>
 
           <CardContent className={styles.back}>{question.answer}</CardContent>

@@ -24,6 +24,15 @@ func NewServer(service *Service) *Server {
 }
 
 func questionToResponse(q *model.Question) *pb.Question {
+
+	var embed *pb.Media = nil
+	if q.Embed != nil {
+		embed = &pb.Media{
+			Url:  q.Embed.Url,
+			Type: pb.MediaType(q.Embed.Type),
+		}
+	}
+
 	return &pb.Question{
 		Id:        q.Id.Hex(),
 		AuthorId:  q.AuthorId.Hex(),
@@ -31,6 +40,7 @@ func questionToResponse(q *model.Question) *pb.Question {
 		Answer:    q.Answer,
 		CreatedAt: q.CreatedAt.String(),
 		UpdatedAt: q.UpdatedAt.String(),
+		Embed:     embed,
 	}
 }
 

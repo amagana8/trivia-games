@@ -53,9 +53,11 @@ export const QuestionDialog: React.FC<{ onClose: () => void }> = memo(({ onClose
       open
       fullWidth
       onClose={onClose}
-      PaperProps={{
-        component: 'form',
-        onSubmit: handleSubmit,
+      slotProps={{
+        paper: {
+          component: 'form',
+          onSubmit: handleSubmit,
+        },
       }}
     >
       <DialogTitle>New Question</DialogTitle>

@@ -1,5 +1,7 @@
 import { css } from '@mui/material-pigment-css';
 
+import { CARD_HEIGHT, CARD_WIDTH } from '../constants';
+
 export const card = css({
   '& > *': {
     backfaceVisibility: 'hidden',
@@ -7,12 +9,13 @@ export const card = css({
   alignItems: 'center',
   borderRadius: '0.375em',
   display: 'flex',
-  height: '5em',
+  flexDirection: 'column',
+  height: CARD_HEIGHT,
   justifyContent: 'center',
   overflow: 'visible',
   transformStyle: 'preserve-3d',
   transition: 'transform 600ms',
-  width: '10em',
+  width: CARD_WIDTH,
 });
 
 export const back = css({
