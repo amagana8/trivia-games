@@ -13,7 +13,7 @@ import {
   TextField,
 } from '@mui/material';
 import { useAtomValue } from 'jotai';
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useState } from 'react';
 
 import { MediaType } from '../../../../../../bff/src/pb/question';
 import { currentUserAtom } from '../../../../atoms/currentUser';
@@ -24,29 +24,26 @@ export const QuestionDialog: React.FC<{ onClose: () => void }> = memo(({ onClose
   const [mediaType, setMediaType] = useState<MediaType>(MediaType.UNDEFINED);
   const currentUser = useAtomValue(currentUserAtom);
 
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-      if (!currentUser) {
-        return;
-      }
+    if (!currentUser) {
+      return;
+    }
 
-      const formData = new FormData(e.currentTarget);
-      await trpc.question.createQuestion.mutate({
-        answer: String(formData.get('answer')),
-        authorId: currentUser.id,
-        embed: {
-          type: mediaType,
-          url: String(formData.get('embedLink')),
-        },
-        query: String(formData.get('query')),
-      });
+    const formData = new FormData(e.currentTarget);
+    await trpc.question.createQuestion.mutate({
+      answer: String(formData.get('answer')),
+      authorId: currentUser.id,
+      embed: {
+        type: mediaType,
+        url: String(formData.get('embedLink')),
+      },
+      query: String(formData.get('query')),
+    });
 
-      onClose();
-    },
-    [currentUser, mediaType, onClose]
-  );
+    onClose();
+  };
 
   return (
     <Dialog

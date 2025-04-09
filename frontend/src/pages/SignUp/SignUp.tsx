@@ -1,7 +1,7 @@
 import { Button, TextField } from '@mui/material';
 import { useNavigate } from '@tanstack/react-router';
 import { useSetAtom } from 'jotai';
-import { memo, useCallback } from 'react';
+import { memo } from 'react';
 
 import { currentUserAtom } from '../../atoms/currentUser';
 import { PasswordInput } from '../../components/PasswordInput/PasswordInput';
@@ -13,28 +13,29 @@ export const SignUp: React.FC = memo(() => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-
-    try {
-      await trpc.user.signUp.mutate({
-        email: String(formData.get('email')),
-        password: String(formData.get('password')),
-        username: String(formData.get('username')),
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      }
-      return;
-    }
-    refreshCurrentUser();
-    navigate({ to: '/' });
-  }, []);
-
   return (
-    <form className={authFormStyles} onSubmit={handleSubmit}>
+    <form
+      className={authFormStyles}
+      onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+
+        try {
+          await trpc.user.signUp.mutate({
+            email: String(formData.get('email')),
+            password: String(formData.get('password')),
+            username: String(formData.get('username')),
+          });
+        } catch (error) {
+          if (error instanceof Error) {
+            alert(error.message);
+          }
+          return;
+        }
+        refreshCurrentUser();
+        navigate({ to: '/' });
+      }}
+    >
       <TextField placeholder="Email" name="email" />
 
       <TextField placeholder="Username" name="username" />

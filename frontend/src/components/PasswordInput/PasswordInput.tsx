@@ -1,12 +1,9 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
-import { memo, useCallback, useState } from 'react';
+import { memo, useState } from 'react';
 
 export const PasswordInput = memo(() => {
   const [showPassword, setShowPassword] = useState(false);
-  const handleClickShowPassword = useCallback(() => {
-    setShowPassword((show) => !show);
-  }, []);
 
   return (
     <TextField
@@ -17,7 +14,7 @@ export const PasswordInput = memo(() => {
         input: {
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={handleClickShowPassword} size="small">
+              <IconButton onClick={() => setShowPassword((show) => !show)} size="small">
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>

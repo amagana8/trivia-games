@@ -34,11 +34,15 @@ export const GridGame: FC = () => {
     });
   }, [currentUser?.id]);
 
+  const handleShowGameList = useCallback(() => {
+    setShowList(true);
+  }, []);
+
   if (!isEditing) {
     return (
       <div className={styles.gridGameSelect}>
         <MenuButton onClick={handleCreateGridGame} label="New" icon={<Add />} />
-        <MenuButton onClick={() => setShowList(true)} label="Edit" icon={<Edit />} />
+        <MenuButton onClick={handleShowGameList} label="Edit" icon={<Edit />} />
         {showList && (
           <Suspense fallback={<div>Loading...</div>}>
             <List>

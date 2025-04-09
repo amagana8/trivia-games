@@ -1,7 +1,7 @@
 import Add from '@mui/icons-material/Add';
 import { Button, Typography } from '@mui/material';
 import { useAtomValue } from 'jotai';
-import { FC, memo, Suspense, useState } from 'react';
+import { FC, memo, Suspense, useCallback, useState } from 'react';
 
 import { availableQuestionsAtom } from '../../../atoms/questions';
 import { QuestionCard } from '../QuestionCard/QuestionCard';
@@ -11,6 +11,8 @@ import { QuestionDialog } from './QuestionDialog/QuestionDialog';
 export const QuestionBank: FC = memo(() => {
   const availableQuestions = useAtomValue(availableQuestionsAtom);
   const [isOpen, setIsOpen] = useState(false);
+
+  const closeDialog = useCallback(() => setIsOpen(false), []);
 
   return (
     <aside className={styles.sidebar}>
@@ -28,7 +30,7 @@ export const QuestionBank: FC = memo(() => {
         Question
       </Button>
 
-      {isOpen && <QuestionDialog onClose={() => setIsOpen(false)} />}
+      {isOpen && <QuestionDialog onClose={closeDialog} />}
     </aside>
   );
 });
