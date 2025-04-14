@@ -1,5 +1,3 @@
-import 'jotai-devtools/styles.css';
-
 import { CssBaseline } from '@mui/material';
 import { RouterProvider } from '@tanstack/react-router';
 

@@ -12,9 +12,11 @@ export const title = css({
   flex: 1,
 });
 
-export const buttons = css({
+export const buttons = css(({ theme }) => ({
+  display: 'flex',
+  gap: theme.spacing(1),
   marginLeft: 'auto',
-});
+}));
 
 export const logo = css(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
