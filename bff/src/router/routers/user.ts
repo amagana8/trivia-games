@@ -19,11 +19,13 @@ export const userRouter = router({
     return {};
   }),
   getMe: publicProcedure.query(({ ctx }) => {
-    if (!ctx.req.cookies.accessToken) {
+    const accessToken = ctx.req.cookies.accessToken;
+
+    if (!accessToken) {
       throw new TRPCError({ code: 'UNAUTHORIZED', message: 'No access token' });
     }
 
-    const { valid, value } = ctx.req.unsignCookie(ctx.req.cookies.accessToken);
+    const { valid, value } = ctx.req.unsignCookie(accessToken);
     if (!valid) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
@@ -35,14 +37,21 @@ export const userRouter = router({
   }),
   refreshToken: publicProcedure.mutation(async ({ ctx }) => {
     const refreshToken = ctx.req.cookies.refreshToken;
+
     if (!refreshToken) {
+      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'No refresh token' });
+    }
+
+    const { valid, value } = ctx.req.unsignCookie(refreshToken);
+
+    if (!valid) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'No refresh token',
       });
     }
 
-    const newTokens = await userService.refreshToken({ refreshToken });
+    const newTokens = await userService.refreshToken({ refreshToken: value });
     sendRefreshToken(ctx.res, newTokens.refreshToken);
     sendAccessToken(ctx.res, newTokens.accessToken);
 

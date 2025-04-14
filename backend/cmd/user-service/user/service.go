@@ -30,33 +30,40 @@ type AuthTokens struct {
 	RefreshToken string
 }
 
+type RefreshTokenClaims struct {
+	jwt.RegisteredClaims
+	TokenVersion int
+}
+
 func createAccessToken(id string) (string, error) {
-	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": id,
-		"exp": time.Now().Add(time.Minute * 15).Unix(),
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
+		Subject:   id,
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 15)),
 	})
 
-	tokenString, err := accessToken.SignedString(config.Envs.AccessTokenKey)
+	signedAccessToken, err := accessToken.SignedString(config.Envs.AccessTokenKey)
 	if err != nil {
 		return "", err
 	}
 
-	return tokenString, nil
+	return signedAccessToken, nil
 }
 
 func createRefreshToken(id string, tokenVersion int) (string, error) {
-	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub":          id,
-		"tokenVersion": tokenVersion,
-		"exp":          time.Now().Add(time.Hour * 24 * 7).Unix(),
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &RefreshTokenClaims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject:   id,
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24 * 7)),
+		},
+		TokenVersion: tokenVersion,
 	})
 
-	tokenString, err := refreshToken.SignedString(config.Envs.RefreshTokenKey)
+	signedRefreshToken, err := refreshToken.SignedString(config.Envs.RefreshTokenKey)
 	if err != nil {
 		return "", err
 	}
 
-	return tokenString, nil
+	return signedRefreshToken, nil
 }
 
 type Service struct {
@@ -236,7 +243,8 @@ func (s *Service) ChangePassword(ctx context.Context, userId string, newPassword
 }
 
 func (s *Service) RefreshToken(ctx context.Context, refreshToken string) (*AuthTokens, error) {
-	token, err := jwt.Parse(refreshToken, func(token *jwt.Token) (interface{}, error) {
+	claims := RefreshTokenClaims{}
+	token, err := jwt.ParseWithClaims(refreshToken, &claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
@@ -253,38 +261,34 @@ func (s *Service) RefreshToken(ctx context.Context, refreshToken string) (*AuthT
 		return nil, ErrInvalidRefreshToken
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok {
-		userId := claims["sub"].(string)
-		tokenVersion := claims["tokenVersion"].(int)
+	userId := claims.RegisteredClaims.Subject
+	tokenVersion := claims.TokenVersion
 
-		user, err := s.Repository.GetById(ctx, userId)
-		if err != nil {
-			fmt.Println("failed to get user by id:", err)
-			return nil, err
-		}
-		if tokenVersion != user.TokenVersion {
-			return nil, ErrInvalidRefreshToken
-		}
-
-		accessToken, err := createAccessToken(userId)
-		if err != nil {
-			fmt.Println("failed to create access token:", err)
-			return nil, err
-		}
-
-		refreshToken, err := createRefreshToken(userId, tokenVersion)
-		if err != nil {
-			fmt.Println("failed to create refresh token:", err)
-			return nil, err
-		}
-
-		return &AuthTokens{
-			AccessToken:  accessToken,
-			RefreshToken: refreshToken,
-		}, nil
-	} else {
+	user, err := s.Repository.GetById(ctx, userId)
+	if err != nil {
+		fmt.Println("failed to get user by id:", err)
 		return nil, err
 	}
+	if tokenVersion != user.TokenVersion {
+		return nil, ErrInvalidRefreshToken
+	}
+
+	accessToken, err := createAccessToken(userId)
+	if err != nil {
+		fmt.Println("failed to create access token:", err)
+		return nil, err
+	}
+
+	newRefreshToken, err := createRefreshToken(userId, tokenVersion)
+	if err != nil {
+		fmt.Println("failed to create refresh token:", err)
+		return nil, err
+	}
+
+	return &AuthTokens{
+		AccessToken:  accessToken,
+		RefreshToken: newRefreshToken,
+	}, nil
 }
 
 func (s *Service) GetMe(ctx context.Context, accessToken string) (*model.User, error) {
