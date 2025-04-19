@@ -2,6 +2,7 @@ package gridGame
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -9,6 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+var ErrUnauthorized = errors.New("unauthorized")
 
 type Service struct {
 	Repository *Repository
@@ -66,7 +69,17 @@ func (s *Service) GetGridGameById(ctx context.Context, id string) (*model.GridGa
 	return gridGame, nil
 }
 
-func (s *Service) UpdateGridGameById(ctx context.Context, id string, title string, grid []model.Column) (*model.GridGame, error) {
+func (s *Service) UpdateGridGameById(ctx context.Context, id string, title string, grid []model.Column, userId string) (*model.GridGame, error) {
+	gridGame, err := s.Repository.FindById(ctx, id)
+	if err != nil {
+		fmt.Println("failed to find gridGame by id:", err)
+		return nil, err
+	}
+	if gridGame.AuthorId.Hex() != userId {
+		fmt.Printf("user %s is not the author of gridGame %s\n", userId, id)
+		return nil, ErrUnauthorized
+	}
+
 	now := time.Now().UTC()
 
 	updates := map[string]interface{}{
@@ -81,7 +94,7 @@ func (s *Service) UpdateGridGameById(ctx context.Context, id string, title strin
 		updates["title"] = title
 	}
 
-	gridGame, err := s.Repository.UpdateByID(ctx, id, updates)
+	gridGame, err = s.Repository.UpdateByID(ctx, id, updates)
 	if err != nil {
 		fmt.Println("failed to update gridGame by id:", err)
 		return nil, err
@@ -90,7 +103,17 @@ func (s *Service) UpdateGridGameById(ctx context.Context, id string, title strin
 	return gridGame, nil
 }
 
-func (s *Service) DeleteGridGameById(ctx context.Context, id string) error {
+func (s *Service) DeleteGridGameById(ctx context.Context, id string, userId string) error {
+	gridGame, err := s.Repository.FindById(ctx, id)
+	if err != nil {
+		fmt.Println("failed to find gridGame by id:", err)
+		return err
+	}
+	if gridGame.AuthorId.Hex() != userId {
+		fmt.Printf("user %s is not the author of gridGame %s\n", userId, id)
+		return ErrUnauthorized
+	}
+
 	deleteResult, err := s.Repository.DeleteById(ctx, id)
 	if err != nil {
 		fmt.Println("failed to delete gridGame by id:", err)

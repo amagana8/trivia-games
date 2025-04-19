@@ -38,10 +38,11 @@ message RefreshTokenRequest {
 }
 
 message GetMeRequest {
-    string accessToken = 1;
+    string id = 1;
 }
 
 message GetMeResponse {
     string id = 1;
     string username = 2;
+    string email = 3;
 }

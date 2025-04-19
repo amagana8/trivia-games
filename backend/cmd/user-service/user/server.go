@@ -89,15 +89,14 @@ func (s *Server) RefreshToken(ctx context.Context, in *pb.RefreshTokenRequest) (
 }
 
 func (s *Server) GetMe(ctx context.Context, in *pb.GetMeRequest) (*pb.GetMeResponse, error) {
-	user, err := s.Service.GetMe(ctx, in.AccessToken)
-	if errors.Is(err, ErrInvalidAccessToken) {
-		return nil, status.Error(codes.Unauthenticated, err.Error())
-	} else if err != nil {
+	user, err := s.Service.GetMe(ctx, in.Id)
+	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to get user")
 	}
 
 	return &pb.GetMeResponse{
 		Id:       user.Id.Hex(),
 		Username: user.Username,
+		Email:    user.Email,
 	}, nil
 }

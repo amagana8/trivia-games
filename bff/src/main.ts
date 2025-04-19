@@ -1,5 +1,7 @@
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
+import fastifyEnv from '@fastify/env';
+import fastifyJwt from '@fastify/jwt';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import fastify from 'fastify';
 
@@ -8,7 +10,27 @@ import { appRouter } from './router/index.js';
 import { userService } from './router/routers/user.js';
 import { sendAuthTokens } from './utils/sendAuthTokens.js';
 
+declare module 'fastify' {
+  interface FastifyInstance {
+    config: {
+      COOKIE_KEY: string;
+      JWT_PUBLIC_KEY: string;
+    };
+  }
+}
+
 const server = fastify({ logger: true });
+
+await server.register(fastifyEnv, {
+  schema: {
+    properties: {
+      COOKIE_KEY: { type: 'string' },
+      JWT_PUBLIC_KEY: { type: 'string' },
+    },
+    required: ['JWT_PUBLIC_KEY', 'COOKIE_KEY'],
+    type: 'object',
+  },
+});
 
 server.register(cors, {
   credentials: true,
@@ -16,7 +38,15 @@ server.register(cors, {
 });
 
 server.register(cookie, {
-  secret: process.env.COOKIE_KEY,
+  secret: server.config.COOKIE_KEY,
+});
+
+server.register(fastifyJwt, {
+  cookie: {
+    cookieName: 'accessToken',
+    signed: true,
+  },
+  secret: { public: server.config.JWT_PUBLIC_KEY },
 });
 
 server.register(fastifyTRPCPlugin, {

@@ -9,7 +9,7 @@ service QuestionService {
     rpc GetQuestion(QuestionId) returns (Question);
     rpc GetAllQuestions(GetAllQuestionsRequest) returns (GetAllQuestionsResponse);
     rpc UpdateQuestion(UpdateQuestionRequest) returns (Question);
-    rpc DeleteQuestion(QuestionId) returns (DeleteQuestionResponse);
+    rpc DeleteQuestion(DeleteQuestionRequest) returns (DeleteQuestionResponse);
 }
 
 message CreateQuestionRequest {
@@ -20,10 +20,11 @@ message CreateQuestionRequest {
 }
 
 message UpdateQuestionRequest {
-    string id = 1;
+    string questionId = 1;
     string query = 3;
     string answer = 4;
     Media embed = 5;
+    string userId = 6;
 }
 
 message Question {
@@ -41,6 +42,11 @@ message QuestionId {
 }
 
 message GetAllQuestionsRequest {}
+
+message DeleteQuestionRequest {
+    string questionId = 1;
+    string userId = 2;
+}
 
 message GetAllQuestionsResponse {
     repeated Question questions = 1;

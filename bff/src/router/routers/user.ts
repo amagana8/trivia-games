@@ -1,38 +1,21 @@
-import { TRPCError } from '@trpc/server';
 import { createChannel, createClient } from 'nice-grpc';
 import { z } from 'zod';
 
 import { UserServiceClient, UserServiceDefinition } from '../../pb/user.js';
 import { sendAuthTokens } from '../../utils/sendAuthTokens.js';
-import { publicProcedure, router } from '../trpc.js';
+import { protectedProcedure, publicProcedure, router } from '../trpc.js';
 
 const channel = createChannel(process.env.USER_SERVICE_URL ?? 'localhost:3004');
 export const userService: UserServiceClient = createClient(UserServiceDefinition, channel);
 
 export const userRouter = router({
-  changePassword: publicProcedure.input(z.object({ newPassword: z.string() })).mutation(async ({ input, ctx }) => {
-    const newTokens = await userService.changePassword(input);
+  changePassword: protectedProcedure.input(z.object({ newPassword: z.string() })).mutation(async ({ input, ctx }) => {
+    const newTokens = await userService.changePassword({ id: ctx.userId, newPassword: input.newPassword });
     sendAuthTokens(ctx.res, newTokens);
 
     return;
   }),
-  getMe: publicProcedure.query(({ ctx }) => {
-    const accessToken = ctx.req.cookies.accessToken;
-
-    if (!accessToken) {
-      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'No access token' });
-    }
-
-    const { valid, value } = ctx.req.unsignCookie(accessToken);
-    if (!valid) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'Invalid access token',
-      });
-    }
-
-    return userService.getMe({ accessToken: value });
-  }),
+  getMe: protectedProcedure.query(({ ctx }) => userService.getMe({ id: ctx.userId })),
   signIn: publicProcedure
     .input(z.object({ password: z.string(), username: z.string() }))
     .mutation(async ({ input, ctx }) => {

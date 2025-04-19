@@ -3,7 +3,7 @@ services:
     build:
       context: ./
       dockerfile: ./backend/cmd/question-service/Dockerfile
-    command: ["-mongoURI=mongodb://question-service-db:27017"]
+    command: ['-mongoURI=mongodb://question-service-db:27017']
     ports:
       - 3001:3001
     depends_on:
@@ -18,7 +18,7 @@ services:
     build:
       context: ./
       dockerfile: ./backend/cmd/game-service/Dockerfile
-    command: ["-mongoURI=mongodb://game-service-db:27017"]
+    command: ['-mongoURI=mongodb://game-service-db:27017']
     ports:
       - 3002:3002
     depends_on:
@@ -33,11 +33,11 @@ services:
     build:
       context: ./
       dockerfile: ./backend/cmd/user-service/Dockerfile
-    command: ["-mongoURI=mongodb://user-service-db:27017"]
+    command: ['-mongoURI=mongodb://user-service-db:27017']
     ports:
       - 3004:3004
     environment:
-      - ACCESS_TOKEN_KEY=${ACCESS_TOKEN_KEY}
+      - ACCESS_TOKEN_PRIVATE_KEY=${ACCESS_TOKEN_PRIVATE_KEY}
       - REFRESH_TOKEN_KEY=${REFRESH_TOKEN_KEY}
     depends_on:
       - user-service-db
@@ -57,6 +57,7 @@ services:
       - QUESTION_SERVICE_URL=question-service:3001
       - GAME_SERVICE_URL=game-service:3002
       - USER_SERVICE_URL=user-service:3004
+      - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
       - COOKIE_KEY=${COOKIE_KEY}
 volumes:
   question-service-db-volume:

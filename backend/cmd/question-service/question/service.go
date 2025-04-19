@@ -2,6 +2,7 @@ package question
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -9,6 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+var ErrUnauthorized = errors.New("unauthorized")
 
 type Service struct {
 	Repository *Repository
@@ -70,7 +73,18 @@ func (s *Service) GetQuestionById(ctx context.Context, id string) (*model.Questi
 	return question, nil
 }
 
-func (s *Service) UpdateQuestionById(ctx context.Context, id string, query string, answer string, embedLink string, embedType model.MediaType) (*model.Question, error) {
+func (s *Service) UpdateQuestionById(ctx context.Context, id string, query string, answer string, embedLink string, embedType model.MediaType, userId string) (*model.Question, error) {
+	question, err := s.Repository.FindById(ctx, id)
+	if err != nil {
+		fmt.Println("failed to find question by id:", err)
+		return nil, err
+	}
+
+	if question.AuthorId.Hex() != userId {
+		fmt.Printf("user %s is not the author of question %s\n", userId, id)
+		return nil, ErrUnauthorized
+	}
+
 	now := time.Now().UTC()
 
 	updates := map[string]interface{}{
@@ -93,7 +107,7 @@ func (s *Service) UpdateQuestionById(ctx context.Context, id string, query strin
 		updates["embed.type"] = embedType
 	}
 
-	question, err := s.Repository.UpdateById(ctx, id, updates)
+	question, err = s.Repository.UpdateById(ctx, id, updates)
 	if err != nil {
 		fmt.Println("failed to update question by id:", err)
 		return nil, err
@@ -102,7 +116,17 @@ func (s *Service) UpdateQuestionById(ctx context.Context, id string, query strin
 	return question, nil
 }
 
-func (s *Service) DeleteQuestionById(ctx context.Context, id string) error {
+func (s *Service) DeleteQuestionById(ctx context.Context, id string, userId string) error {
+	question, err := s.Repository.FindById(ctx, id)
+	if err != nil {
+		fmt.Println("failed to find question by id:", err)
+	}
+
+	if question.AuthorId.Hex() != userId {
+		fmt.Printf("user %s is not the author of question %s", userId, id)
+		return ErrUnauthorized
+	}
+
 	deleteResult, err := s.Repository.DeleteById(ctx, id)
 	if err != nil {
 		fmt.Println("failed to delete question by id:", err)

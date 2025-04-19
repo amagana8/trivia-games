@@ -36,12 +36,12 @@ type RefreshTokenClaims struct {
 }
 
 func createAccessToken(id string) (string, error) {
-	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodRS256, &jwt.RegisteredClaims{
 		Subject:   id,
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 15)),
 	})
 
-	signedAccessToken, err := accessToken.SignedString(config.Envs.AccessTokenKey)
+	signedAccessToken, err := accessToken.SignedString(config.Envs.AccessTokenPrivateKey)
 	if err != nil {
 		return "", err
 	}
@@ -166,6 +166,9 @@ func (s *Service) CreateUser(ctx context.Context, username string, email string,
 func (s *Service) AuthenticateUser(ctx context.Context, username string, password string) (*AuthTokens, error) {
 	user, err := s.Repository.GetByUsername(ctx, username)
 	if err != nil {
+		return nil, err
+	}
+	if user == nil {
 		return nil, ErrUserDoesNotExist
 	}
 
@@ -291,36 +294,12 @@ func (s *Service) RefreshToken(ctx context.Context, refreshToken string) (*AuthT
 	}, nil
 }
 
-func (s *Service) GetMe(ctx context.Context, accessToken string) (*model.User, error) {
-	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-
-		return config.Envs.AccessTokenKey, nil
-	})
-
+func (s *Service) GetMe(ctx context.Context, userId string) (*model.User, error) {
+	user, err := s.Repository.GetById(ctx, userId)
 	if err != nil {
-		fmt.Println("failed to parse access token:", err)
+		fmt.Println("failed to get user by id:", err)
 		return nil, err
 	}
 
-	if !token.Valid {
-		return nil, ErrInvalidAccessToken
-	}
-
-	if claims, ok := token.Claims.(jwt.MapClaims); ok {
-		userId := claims["sub"].(string)
-
-		user, err := s.Repository.GetById(ctx, userId)
-		if err != nil {
-			fmt.Println("failed to get user by id:", err)
-			return nil, err
-		}
-
-		return user, nil
-	} else {
-		fmt.Println("failed to get claims from access token")
-		return nil, err
-	}
+	return user, nil
 }

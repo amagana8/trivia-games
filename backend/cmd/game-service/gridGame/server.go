@@ -109,7 +109,7 @@ func (s *Server) UpdateGridGame(ctx context.Context, in *pb.UpdateGridGameReques
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid grid")
 	}
-	gridGame, err := s.Service.UpdateGridGameById(ctx, in.Id, in.Title, input)
+	gridGame, err := s.Service.UpdateGridGameById(ctx, in.GridGameId, in.Title, input, in.UserId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to update gridGame")
 
@@ -118,8 +118,8 @@ func (s *Server) UpdateGridGame(ctx context.Context, in *pb.UpdateGridGameReques
 	return gridGameToResponse(gridGame), nil
 }
 
-func (s *Server) DeleteGridGame(ctx context.Context, in *pb.GridGameId) (*pb.DeleteGridGameResponse, error) {
-	err := s.Service.DeleteGridGameById(ctx, in.Id)
+func (s *Server) DeleteGridGame(ctx context.Context, in *pb.DeleteGridGameRequest) (*pb.DeleteGridGameResponse, error) {
+	err := s.Service.DeleteGridGameById(ctx, in.GridGameId, in.UserId)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, status.Error(codes.NotFound, "gridGame not found")
 	} else if err != nil {

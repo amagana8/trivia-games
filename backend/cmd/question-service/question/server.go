@@ -82,7 +82,7 @@ func (s *Server) GetAllQuestions(ctx context.Context, in *pb.GetAllQuestionsRequ
 }
 
 func (s *Server) UpdateQuestion(ctx context.Context, in *pb.UpdateQuestionRequest) (*pb.Question, error) {
-	question, err := s.Service.UpdateQuestionById(ctx, in.Id, in.Query, in.Answer, in.Embed.Url, model.MediaType(in.Embed.Type))
+	question, err := s.Service.UpdateQuestionById(ctx, in.QuestionId, in.Query, in.Answer, in.Embed.Url, model.MediaType(in.Embed.Type), in.UserId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to update question")
 	}
@@ -90,8 +90,8 @@ func (s *Server) UpdateQuestion(ctx context.Context, in *pb.UpdateQuestionReques
 	return questionToResponse(question), nil
 }
 
-func (s *Server) DeleteQuestion(ctx context.Context, in *pb.QuestionId) (*pb.DeleteQuestionResponse, error) {
-	err := s.Service.DeleteQuestionById(ctx, in.Id)
+func (s *Server) DeleteQuestion(ctx context.Context, in *pb.DeleteQuestionRequest) (*pb.DeleteQuestionResponse, error) {
+	err := s.Service.DeleteQuestionById(ctx, in.QuestionId, in.UserId)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, status.Error(codes.NotFound, "question not found")
 	} else if err != nil {
