@@ -3,20 +3,18 @@ import { createChannel, createClient } from 'nice-grpc';
 import { z } from 'zod';
 
 import { UserServiceClient, UserServiceDefinition } from '../../pb/user.js';
-import { sendAccessToken } from '../../utils/sendAccessToken.js';
-import { sendRefreshToken } from '../../utils/sendRefreshToken.js';
+import { sendAuthTokens } from '../../utils/sendAuthTokens.js';
 import { publicProcedure, router } from '../trpc.js';
 
 const channel = createChannel(process.env.USER_SERVICE_URL ?? 'localhost:3004');
-const userService: UserServiceClient = createClient(UserServiceDefinition, channel);
+export const userService: UserServiceClient = createClient(UserServiceDefinition, channel);
 
 export const userRouter = router({
   changePassword: publicProcedure.input(z.object({ newPassword: z.string() })).mutation(async ({ input, ctx }) => {
-    const { accessToken, refreshToken } = await userService.changePassword(input);
-    sendRefreshToken(ctx.res, refreshToken);
-    sendAccessToken(ctx.res, accessToken);
+    const newTokens = await userService.changePassword(input);
+    sendAuthTokens(ctx.res, newTokens);
 
-    return {};
+    return;
   }),
   getMe: publicProcedure.query(({ ctx }) => {
     const accessToken = ctx.req.cookies.accessToken;
@@ -35,42 +33,19 @@ export const userRouter = router({
 
     return userService.getMe({ accessToken: value });
   }),
-  refreshToken: publicProcedure.mutation(async ({ ctx }) => {
-    const refreshToken = ctx.req.cookies.refreshToken;
-
-    if (!refreshToken) {
-      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'No refresh token' });
-    }
-
-    const { valid, value } = ctx.req.unsignCookie(refreshToken);
-
-    if (!valid) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'No refresh token',
-      });
-    }
-
-    const newTokens = await userService.refreshToken({ refreshToken: value });
-    sendRefreshToken(ctx.res, newTokens.refreshToken);
-    sendAccessToken(ctx.res, newTokens.accessToken);
-
-    return {};
-  }),
   signIn: publicProcedure
     .input(z.object({ password: z.string(), username: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      const { refreshToken, accessToken } = await userService.signIn(input);
-      sendRefreshToken(ctx.res, refreshToken);
-      sendAccessToken(ctx.res, accessToken);
+      const newTokens = await userService.signIn(input);
+      sendAuthTokens(ctx.res, newTokens);
 
-      return {};
+      return;
     }),
   signOut: publicProcedure.mutation(async ({ ctx }) => {
-    ctx.res.clearCookie('refreshToken');
+    ctx.res.clearCookie('refreshToken', { path: '/refresh_token' });
     ctx.res.clearCookie('accessToken');
 
-    return {};
+    return;
   }),
   signUp: publicProcedure
     .input(
@@ -81,10 +56,9 @@ export const userRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const { refreshToken, accessToken } = await userService.signUp(input);
-      sendRefreshToken(ctx.res, refreshToken);
-      sendAccessToken(ctx.res, accessToken);
+      const newTokens = await userService.signUp(input);
+      sendAuthTokens(ctx.res, newTokens);
 
-      return {};
+      return;
     }),
 });
