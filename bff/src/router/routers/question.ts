@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { MediaType, Question, QuestionServiceClient, QuestionServiceDefinition } from '../../pb/question.js';
 import { protectedProcedure, publicProcedure, router } from '../../router/trpc.js';
+import { userService } from './user.js';
 
 const channel = createChannel(process.env.QUESTION_SERVICE_URL ?? 'localhost:3001');
 const questionService: QuestionServiceClient = createClient(QuestionServiceDefinition, channel);
@@ -22,6 +23,16 @@ export const questionRouter = router({
     .query(({ ctx, input: { questionId } }) => questionService.deleteQuestion({ questionId, userId: ctx.userId })),
   getAllQuestions: publicProcedure.query(async () => {
     const res = await questionService.getAllQuestions({});
+    const questionMap = res.questions.reduce((acc: Record<string, Question>, question) => {
+      acc[question.id] = question;
+      return acc;
+    }, {});
+    return { questionMap };
+  }),
+  getMyQuestions: protectedProcedure.query(async ({ ctx }) => {
+    const { questions } = await userService.getMe({ id: ctx.userId });
+
+    const res = await questionService.getQuestions({ questionIds: questions });
     const questionMap = res.questions.reduce((acc: Record<string, Question>, question) => {
       acc[question.id] = question;
       return acc;

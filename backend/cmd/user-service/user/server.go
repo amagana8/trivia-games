@@ -94,9 +94,21 @@ func (s *Server) GetMe(ctx context.Context, in *pb.GetMeRequest) (*pb.GetMeRespo
 		return nil, status.Error(codes.Internal, "failed to get user")
 	}
 
+	userQuestions := make([]string, len(user.Questions))
+	for i, question := range user.Questions {
+		userQuestions[i] = question.Hex()
+	}
+
+	userGames := make([]string, len(user.Games))
+	for i, game := range user.Games {
+		userGames[i] = game.Hex()
+	}
+
 	return &pb.GetMeResponse{
-		Id:       user.Id.Hex(),
-		Username: user.Username,
-		Email:    user.Email,
+		Id:        user.Id.Hex(),
+		Username:  user.Username,
+		Email:     user.Email,
+		Questions: userQuestions,
+		Games:     userGames,
 	}, nil
 }

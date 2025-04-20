@@ -7,7 +7,8 @@ option go_package = "github.com/amagana8/trivia-games/backend/pkg/pb";
 service QuestionService {
     rpc CreateQuestion(CreateQuestionRequest) returns (Question);
     rpc GetQuestion(QuestionId) returns (Question);
-    rpc GetAllQuestions(GetAllQuestionsRequest) returns (GetAllQuestionsResponse);
+    rpc GetQuestions(GetQuestionsRequest) returns (QuestionList);
+    rpc GetAllQuestions(GetAllQuestionsRequest) returns (QuestionList);
     rpc UpdateQuestion(UpdateQuestionRequest) returns (Question);
     rpc DeleteQuestion(DeleteQuestionRequest) returns (DeleteQuestionResponse);
 }
@@ -43,12 +44,16 @@ message QuestionId {
 
 message GetAllQuestionsRequest {}
 
+message GetQuestionsRequest {
+    repeated string questionIds = 1;
+}
+
 message DeleteQuestionRequest {
     string questionId = 1;
     string userId = 2;
 }
 
-message GetAllQuestionsResponse {
+message QuestionList {
     repeated Question questions = 1;
 }
 

@@ -29,6 +29,30 @@ func (r *Repository) Insert(ctx context.Context, gridGame model.GridGame) (*prim
 	return &id, nil
 }
 
+func (r *Repository) FindByIds(ctx context.Context, ids []string) ([]model.GridGame, error) {
+	objectIds := make([]primitive.ObjectID, len(ids))
+	for i, id := range ids {
+		objectId, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			return nil, err
+		}
+		objectIds[i] = objectId
+	}
+
+	games := []model.GridGame{}
+	gameCursor, err := r.Collection.Find(ctx, bson.M{"_id": bson.M{"$in": objectIds}})
+	if err != nil {
+		return nil, err
+	}
+
+	err = gameCursor.All(ctx, &games)
+	if err != nil {
+		return nil, err
+	}
+
+	return games, nil
+}
+
 func (r *Repository) FindAll(ctx context.Context) ([]model.GridGame, error) {
 	games := []model.GridGame{}
 	gameCursor, err := r.Collection.Find(ctx, bson.M{})

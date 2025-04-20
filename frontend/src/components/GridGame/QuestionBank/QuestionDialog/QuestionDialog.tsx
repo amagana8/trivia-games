@@ -34,7 +34,6 @@ export const QuestionDialog: React.FC<{ onClose: () => void }> = memo(({ onClose
     const formData = new FormData(e.currentTarget);
     await trpc.question.createQuestion.mutate({
       answer: String(formData.get('answer')),
-      authorId: currentUser.id,
       embed: {
         type: mediaType,
         url: String(formData.get('embedLink')),

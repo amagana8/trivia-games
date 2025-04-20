@@ -73,6 +73,15 @@ func (s *Service) GetQuestionById(ctx context.Context, id string) (*model.Questi
 	return question, nil
 }
 
+func (s *Service) GetQuestionsByIds(ctx context.Context, ids []string) (*[]model.Question, error) {
+	questions, err := s.Repository.FindByIds(ctx, ids)
+	if err != nil {
+		fmt.Println("failed to find questions by ids:", err)
+		return nil, err
+	}
+	return &questions, nil
+}
+
 func (s *Service) UpdateQuestionById(ctx context.Context, id string, query string, answer string, embedLink string, embedType model.MediaType, userId string) (*model.Question, error) {
 	question, err := s.Repository.FindById(ctx, id)
 	if err != nil {

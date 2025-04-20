@@ -7,7 +7,8 @@ option go_package = "github.com/amagana8/trivia-games/backend/pkg/pb";
 service GridGameService {
     rpc CreateGridGame(CreateGridGameRequest) returns (GridGame);
     rpc GetGridGame(GridGameId) returns (GridGame);
-    rpc GetAllGridGames(GetAllGridGamesRequest) returns (GetAllGridGamesResponse);
+    rpc GetGridGames(GetGridGamesRequest) returns (GridGameList);
+    rpc GetAllGridGames(GetAllGridGamesRequest) returns (GridGameList);
     rpc UpdateGridGame(UpdateGridGameRequest) returns (GridGame);
     rpc DeleteGridGame(DeleteGridGameRequest) returns (DeleteGridGameResponse);
 }
@@ -43,9 +44,13 @@ message GridGameId {
     string id = 1;
 }
 
+message GetGridGamesRequest {
+    repeated string gridGameIds = 1;
+}
+
 message GetAllGridGamesRequest {}
 
-message GetAllGridGamesResponse {
+message GridGameList {
     repeated GridGame gridGames = 1;
 }
 

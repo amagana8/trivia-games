@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { GridGameServiceClient, GridGameServiceDefinition } from '../../pb/gridGame.js';
 import { protectedProcedure, publicProcedure, router } from '../../router/trpc.js';
+import { userService } from './user.js';
 
 const channel = createChannel(process.env.GAME_SERVICE_URL ?? 'localhost:3002');
 const gridGameService: GridGameServiceClient = createClient(GridGameServiceDefinition, channel);
@@ -21,10 +22,13 @@ export const gridGameRouter = router({
   deleteGridGame: protectedProcedure
     .input(z.object({ gridGameId: z.string() }))
     .query(({ input: { gridGameId }, ctx }) => gridGameService.deleteGridGame({ gridGameId, userId: ctx.userId })),
-  getAllGridGames: publicProcedure.query(() => gridGameService.getAllGridGames({})),
   getGridGame: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input }) => gridGameService.getGridGame(input)),
+  getMyGridGames: protectedProcedure.query(async ({ ctx }) => {
+    const { games } = await userService.getMe({ id: ctx.userId });
+    return gridGameService.getGridGames({ gridGameIds: games });
+  }),
   updateGridGame: protectedProcedure
     .input(
       z.object({

@@ -78,13 +78,30 @@ func (s *Server) CreateGridGame(ctx context.Context, in *pb.CreateGridGameReques
 	return gridGameToResponse(gridGame), nil
 }
 
-func (s *Server) GetAllGridGames(ctx context.Context, in *pb.GetAllGridGamesRequest) (*pb.GetAllGridGamesResponse, error) {
+func (s *Server) GetGridGames(ctx context.Context, in *pb.GetGridGamesRequest) (*pb.GridGameList, error) {
+	gridGames, err := s.Service.GetGridGamesByIds(ctx, in.GridGameIds)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, status.Error(codes.NotFound, "gridGames not found")
+	} else if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get gridGames")
+	}
+
+	res := &pb.GridGameList{}
+	res.GridGames = make([]*pb.GridGame, len(*gridGames))
+	for i, gridGame := range *gridGames {
+		res.GridGames[i] = gridGameToResponse(&gridGame)
+	}
+
+	return res, nil
+}
+
+func (s *Server) GetAllGridGames(ctx context.Context, in *pb.GetAllGridGamesRequest) (*pb.GridGameList, error) {
 	gridGames, err := s.Service.GetAllGridGames(ctx)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to get all gridGames")
 	}
 
-	res := &pb.GetAllGridGamesResponse{}
+	res := &pb.GridGameList{}
 	res.GridGames = make([]*pb.GridGame, len(*gridGames))
 	for i, gridGame := range *gridGames {
 		res.GridGames[i] = gridGameToResponse(&gridGame)

@@ -44,6 +44,30 @@ func (r *Repository) FindById(ctx context.Context, id string) (*model.Question, 
 	return &question, nil
 }
 
+func (r *Repository) FindByIds(ctx context.Context, ids []string) ([]model.Question, error) {
+	objectIds := make([]primitive.ObjectID, len(ids))
+	for i, id := range ids {
+		objectId, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			return nil, err
+		}
+		objectIds[i] = objectId
+	}
+
+	questions := []model.Question{}
+	questionCursor, err := r.Collection.Find(ctx, bson.M{"_id": bson.M{"$in": objectIds}})
+	if err != nil {
+		return nil, err
+	}
+
+	err = questionCursor.All(ctx, &questions)
+	if err != nil {
+		return nil, err
+	}
+
+	return questions, nil
+}
+
 func (r *Repository) FindAll(ctx context.Context) ([]model.Question, error) {
 	questions := []model.Question{}
 	questionCursor, err := r.Collection.Find(ctx, bson.M{})

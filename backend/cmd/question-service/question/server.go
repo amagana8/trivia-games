@@ -66,13 +66,30 @@ func (s *Server) GetQuestion(ctx context.Context, in *pb.QuestionId) (*pb.Questi
 	return questionToResponse(question), nil
 }
 
-func (s *Server) GetAllQuestions(ctx context.Context, in *pb.GetAllQuestionsRequest) (*pb.GetAllQuestionsResponse, error) {
+func (s *Server) GetQuestions(ctx context.Context, in *pb.GetQuestionsRequest) (*pb.QuestionList, error) {
+	questions, err := s.Service.GetQuestionsByIds(ctx, in.QuestionIds)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, status.Error(codes.NotFound, "questions not found")
+	} else if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get questions")
+	}
+
+	res := &pb.QuestionList{}
+	res.Questions = make([]*pb.Question, len(*questions))
+	for i, q := range *questions {
+		res.Questions[i] = questionToResponse(&q)
+	}
+
+	return res, nil
+}
+
+func (s *Server) GetAllQuestions(ctx context.Context, in *pb.GetAllQuestionsRequest) (*pb.QuestionList, error) {
 	questions, err := s.Service.GetAllQuestions(ctx)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to get all questions")
 	}
 
-	res := &pb.GetAllQuestionsResponse{}
+	res := &pb.QuestionList{}
 	res.Questions = make([]*pb.Question, len(*questions))
 	for i, q := range *questions {
 		res.Questions[i] = questionToResponse(&q)

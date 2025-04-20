@@ -28,7 +28,6 @@ export const GridGame: React.FC = () => {
     }
 
     await trpc.gridGame.createGridGame.mutate({
-      authorId: currentUser.id,
       grid: [],
       title: '',
     });

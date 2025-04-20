@@ -4,7 +4,7 @@ import { atomFamily } from 'jotai/utils';
 import { trpc } from '../trpc';
 import { gridGameAtom } from './gridGame';
 
-export const allQuestionsQueryAtom = atom(() => trpc.question.getAllQuestions.query());
+export const allQuestionsQueryAtom = atom(() => trpc.question.getMyQuestions.query());
 
 export const availableQuestionsAtom = atom(async (get) => {
   const allQuestions = await get(allQuestionsQueryAtom);

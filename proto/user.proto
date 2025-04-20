@@ -45,4 +45,6 @@ message GetMeResponse {
     string id = 1;
     string username = 2;
     string email = 3;
+    repeated string questions = 4;
+    repeated string games = 5;
 }

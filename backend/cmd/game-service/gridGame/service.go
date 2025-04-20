@@ -49,6 +49,16 @@ func (s *Service) CreateGridGame(ctx context.Context, authorId string, title str
 	return &gridGame, nil
 }
 
+func (s *Service) GetGridGamesByIds(ctx context.Context, ids []string) (*[]model.GridGame, error) {
+	gridGames, err := s.Repository.FindByIds(ctx, ids)
+	if err != nil {
+		fmt.Println("failed to get gridGames by ids:", err)
+		return nil, err
+	}
+
+	return &gridGames, nil
+}
+
 func (s *Service) GetAllGridGames(ctx context.Context) (*[]model.GridGame, error) {
 	gridGames, err := s.Repository.FindAll(ctx)
 	if err != nil {
