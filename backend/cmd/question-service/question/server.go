@@ -34,13 +34,13 @@ func questionToResponse(q *model.Question) *pb.Question {
 	}
 
 	return &pb.Question{
-		Id:        q.Id.Hex(),
-		AuthorId:  q.AuthorId.Hex(),
-		Query:     q.Query,
-		Answer:    q.Answer,
-		CreatedAt: q.CreatedAt.String(),
-		UpdatedAt: q.UpdatedAt.String(),
-		Embed:     embed,
+		QuestionId: q.Id.Hex(),
+		AuthorId:   q.AuthorId.Hex(),
+		Query:      q.Query,
+		Answer:     q.Answer,
+		CreatedAt:  q.CreatedAt.String(),
+		UpdatedAt:  q.UpdatedAt.String(),
+		Embed:      embed,
 	}
 }
 
@@ -56,7 +56,7 @@ func (s *Server) CreateQuestion(ctx context.Context, in *pb.CreateQuestionReques
 }
 
 func (s *Server) GetQuestion(ctx context.Context, in *pb.QuestionId) (*pb.Question, error) {
-	question, err := s.Service.GetQuestionById(ctx, in.Id)
+	question, err := s.Service.GetQuestionById(ctx, in.QuestionId)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, status.Error(codes.NotFound, "question not found")
 	} else if err != nil {
@@ -99,7 +99,7 @@ func (s *Server) GetAllQuestions(ctx context.Context, in *pb.GetAllQuestionsRequ
 }
 
 func (s *Server) UpdateQuestion(ctx context.Context, in *pb.UpdateQuestionRequest) (*pb.Question, error) {
-	question, err := s.Service.UpdateQuestionById(ctx, in.QuestionId, in.Query, in.Answer, in.Embed.Url, model.MediaType(in.Embed.Type), in.UserId)
+	question, err := s.Service.UpdateQuestionById(ctx, in.QuestionId, in.Query, in.Answer, in.Embed.Url, model.MediaType(in.Embed.Type), in.AuthorId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to update question")
 	}
@@ -108,7 +108,7 @@ func (s *Server) UpdateQuestion(ctx context.Context, in *pb.UpdateQuestionReques
 }
 
 func (s *Server) DeleteQuestion(ctx context.Context, in *pb.DeleteQuestionRequest) (*pb.DeleteQuestionResponse, error) {
-	err := s.Service.DeleteQuestionById(ctx, in.QuestionId, in.UserId)
+	err := s.Service.DeleteQuestionById(ctx, in.QuestionId, in.AuthorId)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, status.Error(codes.NotFound, "question not found")
 	} else if err != nil {

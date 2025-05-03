@@ -21,12 +21,12 @@ export const gridGameRouter = router({
     .mutation(({ input, ctx }) => gridGameService.createGridGame({ ...input, authorId: ctx.userId })),
   deleteGridGame: protectedProcedure
     .input(z.object({ gridGameId: z.string() }))
-    .query(({ input: { gridGameId }, ctx }) => gridGameService.deleteGridGame({ gridGameId, userId: ctx.userId })),
+    .query(({ input: { gridGameId }, ctx }) => gridGameService.deleteGridGame({ authorId: ctx.userId, gridGameId })),
   getGridGame: publicProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ gridGameId: z.string() }))
     .query(({ input }) => gridGameService.getGridGame(input)),
   getMyGridGames: protectedProcedure.query(async ({ ctx }) => {
-    const { games } = await userService.getMe({ id: ctx.userId });
+    const { games } = await userService.getMe({ userId: ctx.userId });
     return gridGameService.getGridGames({ gridGameIds: games });
   }),
   updateGridGame: protectedProcedure
@@ -37,5 +37,5 @@ export const gridGameRouter = router({
         title: z.string(),
       })
     )
-    .mutation(({ input, ctx }) => gridGameService.updateGridGame({ ...input, userId: ctx.userId })),
+    .mutation(({ input, ctx }) => gridGameService.updateGridGame({ ...input, authorId: ctx.userId })),
 });

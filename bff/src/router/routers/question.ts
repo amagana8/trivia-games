@@ -20,27 +20,27 @@ export const questionRouter = router({
     .mutation(({ input, ctx }) => questionService.createQuestion({ ...input, authorId: ctx.userId })),
   deleteQuestion: protectedProcedure
     .input(z.object({ questionId: z.string() }))
-    .query(({ ctx, input: { questionId } }) => questionService.deleteQuestion({ questionId, userId: ctx.userId })),
+    .query(({ ctx, input: { questionId } }) => questionService.deleteQuestion({ authorId: ctx.userId, questionId })),
   getAllQuestions: publicProcedure.query(async () => {
     const res = await questionService.getAllQuestions({});
     const questionMap = res.questions.reduce((acc: Record<string, Question>, question) => {
-      acc[question.id] = question;
+      acc[question.questionId] = question;
       return acc;
     }, {});
     return { questionMap };
   }),
   getMyQuestions: protectedProcedure.query(async ({ ctx }) => {
-    const { questions } = await userService.getMe({ id: ctx.userId });
+    const { questions } = await userService.getMe({ userId: ctx.userId });
 
     const res = await questionService.getQuestions({ questionIds: questions });
     const questionMap = res.questions.reduce((acc: Record<string, Question>, question) => {
-      acc[question.id] = question;
+      acc[question.questionId] = question;
       return acc;
     }, {});
     return { questionMap };
   }),
   getQuestion: publicProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ questionId: z.string() }))
     .query(({ input }) => questionService.getQuestion(input)),
   updateQuestion: protectedProcedure
     .input(
@@ -50,5 +50,5 @@ export const questionRouter = router({
         query: z.string(),
       })
     )
-    .mutation(({ input, ctx }) => questionService.updateQuestion({ ...input, userId: ctx.userId })),
+    .mutation(({ input, ctx }) => questionService.updateQuestion({ ...input, authorId: ctx.userId })),
 });

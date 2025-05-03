@@ -36,12 +36,12 @@ func gridGameToResponse(g *model.GridGame) *pb.GridGame {
 	}
 
 	return &pb.GridGame{
-		Id:        g.Id.Hex(),
-		AuthorId:  g.AuthorId.Hex(),
-		Grid:      grid,
-		Title:     g.Title,
-		CreatedAt: g.CreatedAt.String(),
-		UpdatedAt: g.UpdatedAt.String(),
+		GridGameId: g.Id.Hex(),
+		AuthorId:   g.AuthorId.Hex(),
+		Grid:       grid,
+		Title:      g.Title,
+		CreatedAt:  g.CreatedAt.String(),
+		UpdatedAt:  g.UpdatedAt.String(),
 	}
 }
 
@@ -111,7 +111,7 @@ func (s *Server) GetAllGridGames(ctx context.Context, in *pb.GetAllGridGamesRequ
 }
 
 func (s *Server) GetGridGame(ctx context.Context, in *pb.GridGameId) (*pb.GridGame, error) {
-	gridGame, err := s.Service.GetGridGameById(ctx, in.Id)
+	gridGame, err := s.Service.GetGridGameById(ctx, in.GridGameId)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, status.Error(codes.NotFound, "gridGame not found")
 	} else if err != nil {
@@ -126,7 +126,7 @@ func (s *Server) UpdateGridGame(ctx context.Context, in *pb.UpdateGridGameReques
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid grid")
 	}
-	gridGame, err := s.Service.UpdateGridGameById(ctx, in.GridGameId, in.Title, input, in.UserId)
+	gridGame, err := s.Service.UpdateGridGameById(ctx, in.GridGameId, in.Title, input, in.AuthorId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to update gridGame")
 
@@ -136,7 +136,7 @@ func (s *Server) UpdateGridGame(ctx context.Context, in *pb.UpdateGridGameReques
 }
 
 func (s *Server) DeleteGridGame(ctx context.Context, in *pb.DeleteGridGameRequest) (*pb.DeleteGridGameResponse, error) {
-	err := s.Service.DeleteGridGameById(ctx, in.GridGameId, in.UserId)
+	err := s.Service.DeleteGridGameById(ctx, in.GridGameId, in.AuthorId)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, status.Error(codes.NotFound, "gridGame not found")
 	} else if err != nil {

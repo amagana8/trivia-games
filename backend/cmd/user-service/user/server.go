@@ -59,7 +59,7 @@ func (s *Server) SignIn(ctx context.Context, in *pb.SignInRequest) (*pb.SignInRe
 }
 
 func (s *Server) ChangePassword(ctx context.Context, in *pb.ChangePasswordRequest) (*pb.SignInResponse, error) {
-	tokens, err := s.Service.ChangePassword(ctx, in.Id, in.NewPassword)
+	tokens, err := s.Service.ChangePassword(ctx, in.UserId, in.NewPassword)
 	if errors.Is(err, ErrUserDoesNotExist) {
 		return nil, status.Error(codes.NotFound, err.Error())
 	} else if errors.Is(err, ErrInvalidPassword) {
@@ -89,7 +89,7 @@ func (s *Server) RefreshToken(ctx context.Context, in *pb.RefreshTokenRequest) (
 }
 
 func (s *Server) GetMe(ctx context.Context, in *pb.GetMeRequest) (*pb.GetMeResponse, error) {
-	user, err := s.Service.GetMe(ctx, in.Id)
+	user, err := s.Service.GetMe(ctx, in.UserId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to get user")
 	}
@@ -105,7 +105,7 @@ func (s *Server) GetMe(ctx context.Context, in *pb.GetMeRequest) (*pb.GetMeRespo
 	}
 
 	return &pb.GetMeResponse{
-		Id:        user.Id.Hex(),
+		UserId:    user.Id.Hex(),
 		Username:  user.Username,
 		Email:     user.Email,
 		Questions: userQuestions,

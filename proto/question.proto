@@ -25,11 +25,11 @@ message UpdateQuestionRequest {
     string query = 3;
     string answer = 4;
     Media embed = 5;
-    string userId = 6;
+    string authorId = 6;
 }
 
 message Question {
-    string id = 1;
+    string questionId = 1;
     string authorId = 2;
     string query = 3;
     string answer = 4;
@@ -39,7 +39,7 @@ message Question {
 }
 
 message QuestionId {
-    string id = 1;
+    string questionId = 1;
 }
 
 message GetAllQuestionsRequest {}
@@ -50,7 +50,7 @@ message GetQuestionsRequest {
 
 message DeleteQuestionRequest {
     string questionId = 1;
-    string userId = 2;
+    string authorId = 2;
 }
 
 message QuestionList {

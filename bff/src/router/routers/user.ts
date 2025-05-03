@@ -10,12 +10,12 @@ export const userService: UserServiceClient = createClient(UserServiceDefinition
 
 export const userRouter = router({
   changePassword: protectedProcedure.input(z.object({ newPassword: z.string() })).mutation(async ({ input, ctx }) => {
-    const newTokens = await userService.changePassword({ id: ctx.userId, newPassword: input.newPassword });
+    const newTokens = await userService.changePassword({ newPassword: input.newPassword, userId: ctx.userId });
     sendAuthTokens(ctx.res, newTokens);
 
     return;
   }),
-  getMe: protectedProcedure.query(({ ctx }) => userService.getMe({ id: ctx.userId })),
+  getMe: protectedProcedure.query(({ ctx }) => userService.getMe({ userId: ctx.userId })),
   signIn: publicProcedure
     .input(z.object({ password: z.string(), username: z.string() }))
     .mutation(async ({ input, ctx }) => {

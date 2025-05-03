@@ -19,7 +19,7 @@ message Column {
 }
 
 message GridGame {
-    string id = 1;
+    string gridGameId = 1;
     string authorId = 2;
     string title = 3;
     repeated Column grid = 4;
@@ -37,11 +37,11 @@ message UpdateGridGameRequest {
     string gridGameId = 1;
     string title = 2;
     repeated Column grid = 3;
-    string userId = 4;
+    string authorId = 4;
 }
 
 message GridGameId {
-    string id = 1;
+    string gridGameId = 1;
 }
 
 message GetGridGamesRequest {
@@ -56,7 +56,7 @@ message GridGameList {
 
 message DeleteGridGameRequest {
     string gridGameId = 1;
-    string userId = 2;
+    string authorId = 2;
 }
 
 message DeleteGridGameResponse {}
