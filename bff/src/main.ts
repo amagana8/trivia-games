@@ -5,9 +5,9 @@ import fastifyJwt from '@fastify/jwt';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import fastify from 'fastify';
 
+import { userService } from './modules/user/user.service.js';
 import { createContext } from './router/context.js';
 import { appRouter } from './router/index.js';
-import { userService } from './router/routers/user.js';
 import { sendAuthTokens } from './utils/sendAuthTokens.js';
 
 declare module 'fastify' {

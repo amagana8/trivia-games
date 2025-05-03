@@ -1,6 +1,6 @@
-import { gridGameRouter } from './routers/gridGame.js';
-import { questionRouter } from './routers/question.js';
-import { userRouter } from './routers/user.js';
+import { gridGameRouter } from '../modules/grid-game/grid-game.router.js';
+import { questionRouter } from '../modules/question/question.router.js';
+import { userRouter } from '../modules/user/user.router.js';
 import { router } from './trpc.js';
 
 export const appRouter = router({

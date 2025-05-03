@@ -1,25 +1,15 @@
-import { createChannel, createClient } from 'nice-grpc';
-import { z } from 'zod';
-
-import { MediaType, Question, QuestionServiceClient, QuestionServiceDefinition } from '../../pb/question.js';
+import { Question } from '../../pb/question.js';
 import { protectedProcedure, publicProcedure, router } from '../../router/trpc.js';
-import { userService } from './user.js';
-
-const channel = createChannel(process.env.QUESTION_SERVICE_URL ?? 'localhost:3001');
-const questionService: QuestionServiceClient = createClient(QuestionServiceDefinition, channel);
+import { userService } from '../user/user.service.js';
+import { questionService } from './question.service.js';
+import { questionInputValidator, questionValidator } from './question.validators.js';
 
 export const questionRouter = router({
   createQuestion: protectedProcedure
-    .input(
-      z.object({
-        answer: z.string(),
-        embed: z.object({ type: z.nativeEnum(MediaType), url: z.string() }),
-        query: z.string(),
-      })
-    )
+    .input(questionInputValidator)
     .mutation(({ input, ctx }) => questionService.createQuestion({ ...input, authorId: ctx.userId })),
   deleteQuestion: protectedProcedure
-    .input(z.object({ questionId: z.string() }))
+    .input(questionValidator.pick({ questionId: true }))
     .query(({ ctx, input: { questionId } }) => questionService.deleteQuestion({ authorId: ctx.userId, questionId })),
   getAllQuestions: publicProcedure.query(async () => {
     const res = await questionService.getAllQuestions({});
@@ -40,15 +30,9 @@ export const questionRouter = router({
     return { questionMap };
   }),
   getQuestion: publicProcedure
-    .input(z.object({ questionId: z.string() }))
+    .input(questionValidator.pick({ questionId: true }))
     .query(({ input }) => questionService.getQuestion(input)),
   updateQuestion: protectedProcedure
-    .input(
-      z.object({
-        answer: z.string(),
-        embed: z.object({ type: z.nativeEnum(MediaType), url: z.string() }),
-        query: z.string(),
-      })
-    )
+    .input(questionInputValidator)
     .mutation(({ input, ctx }) => questionService.updateQuestion({ ...input, authorId: ctx.userId })),
 });
