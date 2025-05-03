@@ -19,7 +19,11 @@ export const GameSelect: React.FC = memo(() => {
 
   return (
     <div className={menuScreenStyles}>
-      <MenuButton label="Grid" icon={<Apps />} onClick={handleNavigateToGridGame} />
+      <MenuButton
+        label="Grid"
+        icon={<Apps />}
+        onClick={handleNavigateToGridGame}
+      />
 
       <MenuButton
         label="Spinner"

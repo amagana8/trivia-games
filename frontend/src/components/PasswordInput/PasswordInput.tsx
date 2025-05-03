@@ -14,7 +14,10 @@ export const PasswordInput = memo(() => {
         input: {
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={() => setShowPassword((show) => !show)} size="small">
+              <IconButton
+                onClick={() => setShowPassword((show) => !show)}
+                size="small"
+              >
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>

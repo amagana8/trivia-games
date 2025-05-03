@@ -15,7 +15,8 @@
   },
   "scripts": {
     "bff": "pnpm --filter bff dev",
-    "ui": "pnpm --filter trivia-games dev"
+    "ui": "pnpm --filter trivia-games dev",
+    "lint": "eslint ."
   },
   "type": "module"
 }

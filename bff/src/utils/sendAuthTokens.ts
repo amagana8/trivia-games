@@ -2,7 +2,7 @@ import { FastifyReply } from 'fastify';
 
 export function sendAuthTokens(
   reply: FastifyReply,
-  { accessToken, refreshToken }: { accessToken: string; refreshToken: string }
+  { accessToken, refreshToken }: { accessToken: string; refreshToken: string },
 ) {
   reply.setCookie('accessToken', accessToken, {
     httpOnly: true,

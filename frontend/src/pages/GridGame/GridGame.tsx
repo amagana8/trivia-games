@@ -74,7 +74,10 @@ export const GridGame: React.FC = () => {
       <QuestionGrid />
 
       <div className={styles.footer}>
-        <Button variant="contained" onClick={() => trpc.gridGame.updateGridGame.mutate(gridGameState)}>
+        <Button
+          variant="contained"
+          onClick={() => trpc.gridGame.updateGridGame.mutate(gridGameState)}
+        >
           Save
         </Button>
       </div>

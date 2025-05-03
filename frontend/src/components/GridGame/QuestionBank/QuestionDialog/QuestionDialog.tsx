@@ -20,82 +20,88 @@ import { currentUserAtom } from '../../../../atoms/currentUser';
 import { trpc } from '../../../../trpc';
 import * as styles from './QuestionDialog.styles';
 
-export const QuestionDialog: React.FC<{ onClose: () => void }> = memo(({ onClose }) => {
-  const [mediaType, setMediaType] = useState<MediaType>(MediaType.UNDEFINED);
-  const currentUser = useAtomValue(currentUserAtom);
+export const QuestionDialog: React.FC<{ onClose: () => void }> = memo(
+  ({ onClose }) => {
+    const [mediaType, setMediaType] = useState<MediaType>(MediaType.UNDEFINED);
+    const currentUser = useAtomValue(currentUserAtom);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    if (!currentUser) {
-      return;
-    }
+      if (!currentUser) {
+        return;
+      }
 
-    const formData = new FormData(e.currentTarget);
-    await trpc.question.createQuestion.mutate({
-      answer: String(formData.get('answer')),
-      embed: {
-        type: mediaType,
-        url: String(formData.get('embedLink')),
-      },
-      query: String(formData.get('query')),
-    });
-
-    onClose();
-  };
-
-  return (
-    <Dialog
-      open
-      fullWidth
-      onClose={onClose}
-      slotProps={{
-        paper: {
-          component: 'form',
-          onSubmit: handleSubmit,
+      const formData = new FormData(e.currentTarget);
+      await trpc.question.createQuestion.mutate({
+        answer: String(formData.get('answer')),
+        embed: {
+          type: mediaType,
+          url: String(formData.get('embedLink')),
         },
-      }}
-    >
-      <DialogTitle>New Question</DialogTitle>
+        query: String(formData.get('query')),
+      });
 
-      <DialogContent className={styles.dialogForm}>
-        <TextField placeholder="Question" name="query" />
+      onClose();
+    };
 
-        <TextField placeholder="Answer" name="answer" />
+    return (
+      <Dialog
+        open
+        fullWidth
+        onClose={onClose}
+        slotProps={{
+          paper: {
+            component: 'form',
+            onSubmit: handleSubmit,
+          },
+        }}
+      >
+        <DialogTitle>New Question</DialogTitle>
 
-        <FormLabel>Embed</FormLabel>
+        <DialogContent className={styles.dialogForm}>
+          <TextField placeholder="Question" name="query" />
 
-        <FormGroup row>
-          <FormControl>
-            <InputLabel>Media Type</InputLabel>
+          <TextField placeholder="Answer" name="answer" />
 
-            <Select
-              value={mediaType}
-              label="Media Type"
-              sx={{ width: '10em' }}
-              onChange={(e) => setMediaType(e.target.value as MediaType)}
-            >
-              <MenuItem value={MediaType.IMAGE}>Image</MenuItem>
+          <FormLabel>Embed</FormLabel>
 
-              <MenuItem value={MediaType.VIDEO}>Video</MenuItem>
+          <FormGroup row>
+            <FormControl>
+              <InputLabel>Media Type</InputLabel>
 
-              <MenuItem value={MediaType.AUDIO}>Audio</MenuItem>
-            </Select>
-          </FormControl>
+              <Select
+                value={mediaType}
+                label="Media Type"
+                sx={{ width: '10em' }}
+                onChange={(e) => setMediaType(e.target.value as MediaType)}
+              >
+                <MenuItem value={MediaType.IMAGE}>Image</MenuItem>
 
-          <TextField placeholder="Embed Link" name="embedLink" className={styles.embedLinkInput} />
-        </FormGroup>
-      </DialogContent>
+                <MenuItem value={MediaType.VIDEO}>Video</MenuItem>
 
-      <DialogActions>
-        <Button onClick={onClose} variant="outlined">
-          Cancel
-        </Button>
+                <MenuItem value={MediaType.AUDIO}>Audio</MenuItem>
+              </Select>
+            </FormControl>
 
-        <Button type="submit" variant="contained">
-          Save
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-});
+            <TextField
+              placeholder="Embed Link"
+              name="embedLink"
+              className={styles.embedLinkInput}
+            />
+          </FormGroup>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={onClose} variant="outlined">
+            Cancel
+          </Button>
+
+          <Button type="submit" variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  },
+);

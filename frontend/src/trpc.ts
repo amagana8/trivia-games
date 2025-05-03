@@ -16,12 +16,19 @@ const refreshTokenLink: TRPCLink<AppRouter> = () => {
             observer.complete();
           },
           async error(error) {
-            if (attempts < 2 && error.data && error.data.code === 'UNAUTHORIZED') {
+            if (
+              attempts < 2 &&
+              error.data &&
+              error.data.code === 'UNAUTHORIZED'
+            ) {
               try {
-                const res = await fetch(`${import.meta.env.VITE_BFF_URL}/refresh_token`, {
-                  credentials: 'include',
-                  method: 'POST',
-                });
+                const res = await fetch(
+                  `${import.meta.env.VITE_BFF_URL}/refresh_token`,
+                  {
+                    credentials: 'include',
+                    method: 'POST',
+                  },
+                );
 
                 if (res.ok) {
                   attempt(attempts + 1);

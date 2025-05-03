@@ -1,4 +1,8 @@
-import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
+import {
+  createRootRoute,
+  createRoute,
+  createRouter,
+} from '@tanstack/react-router';
 
 import { GameSelect } from './pages/GameSelect/GameSelect';
 import { GridGame } from './pages/GridGame/GridGame';
@@ -41,6 +45,12 @@ const gridGameRoute = createRoute({
   path: '/grid-game',
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, signUpRoute, loginRoute, selectGameRoute, gridGameRoute]);
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  signUpRoute,
+  loginRoute,
+  selectGameRoute,
+  gridGameRoute,
+]);
 
 export const router = createRouter({ defaultPreload: 'intent', routeTree });

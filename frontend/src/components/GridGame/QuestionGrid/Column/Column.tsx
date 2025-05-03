@@ -30,7 +30,7 @@ const Column: React.FC<{
             setGridGame(
               produce((draft) => {
                 draft.grid[categoryIndex].category = e.target.value;
-              })
+              }),
             )
           }
         />
@@ -39,7 +39,11 @@ const Column: React.FC<{
       )}
 
       {questions.map((questionId, index) => (
-        <QuestionSlot key={index} categoryIndex={categoryIndex} questionIndex={index}>
+        <QuestionSlot
+          key={index}
+          categoryIndex={categoryIndex}
+          questionIndex={index}
+        >
           {questionId ? (
             <QuestionCard questionId={questionId} />
           ) : (
@@ -54,7 +58,7 @@ const Column: React.FC<{
               setGridGame(
                 produce((draft) => {
                   draft.grid[categoryIndex].questions.pop();
-                })
+                }),
               );
             }}
           >
@@ -66,7 +70,7 @@ const Column: React.FC<{
               setGridGame(
                 produce((draft) => {
                   draft.grid[categoryIndex].questions.push('');
-                })
+                }),
               );
             }}
           >

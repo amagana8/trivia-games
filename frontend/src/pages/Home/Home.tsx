@@ -18,9 +18,17 @@ export const Home: React.FC = memo(() => {
 
   return (
     <div className={menuScreenStyles}>
-      <MenuButton label="Create" icon={<Add />} onClick={handleNavigateToSelectGame} />
+      <MenuButton
+        label="Create"
+        icon={<Add />}
+        onClick={handleNavigateToSelectGame}
+      />
 
-      <MenuButton label="Play" icon={<PlayArrow />} onClick={handleNavigateToPlayGame} />
+      <MenuButton
+        label="Play"
+        icon={<PlayArrow />}
+        onClick={handleNavigateToPlayGame}
+      />
     </div>
   );
 });

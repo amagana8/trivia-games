@@ -26,7 +26,11 @@ export const QuestionBank: React.FC = memo(() => {
         </Suspense>
       </div>
 
-      <Button startIcon={<Add />} variant="outlined" onClick={() => setIsOpen(true)}>
+      <Button
+        startIcon={<Add />}
+        variant="outlined"
+        onClick={() => setIsOpen(true)}
+      >
         Question
       </Button>
 

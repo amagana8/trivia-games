@@ -1,5 +1,13 @@
 import { AccountCircle } from '@mui/icons-material';
-import { Button, ButtonBase, IconButton, Menu, MenuItem, Paper, Typography } from '@mui/material';
+import {
+  Button,
+  ButtonBase,
+  IconButton,
+  Menu,
+  MenuItem,
+  Paper,
+  Typography,
+} from '@mui/material';
 import { useNavigate } from '@tanstack/react-router';
 import { useAtom } from 'jotai';
 import { memo, Suspense, useRef, useState } from 'react';
@@ -19,14 +27,20 @@ export const NavBar: React.FC = memo(() => {
   return (
     <>
       <Paper className={styles.navBar}>
-        <ButtonBase onClick={() => navigate({ to: '/' })} className={styles.logo}>
+        <ButtonBase
+          onClick={() => navigate({ to: '/' })}
+          className={styles.logo}
+        >
           <Typography variant="h6">Trivia Games</Typography>
         </ButtonBase>
 
         <div className={styles.buttons}>
           {currentUser ? (
             <Suspense fallback={<div>Loading...</div>}>
-              <IconButton ref={accountButtonRef} onClick={() => setMenuOpen(true)}>
+              <IconButton
+                ref={accountButtonRef}
+                onClick={() => setMenuOpen(true)}
+              >
                 <AccountCircle />
               </IconButton>
             </Suspense>
@@ -49,7 +63,11 @@ export const NavBar: React.FC = memo(() => {
         </div>
       </Paper>
 
-      <Menu anchorEl={accountButtonRef.current} open={menuOpen} onClose={() => setMenuOpen(false)}>
+      <Menu
+        anchorEl={accountButtonRef.current}
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+      >
         <MenuItem
           onClick={async () => {
             await trpc.user.signOut.mutate();
