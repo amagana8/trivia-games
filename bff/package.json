@@ -13,7 +13,6 @@
     "proto:generate": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --proto_path=../proto --ts_proto_out=./src/pb --ts_proto_opt=outputServices=nice-grpc,outputServices=generic-definitions,esModuleInterop=true,importSuffix=.js ../proto/*.proto"
   },
   "dependencies": {
-    "@bufbuild/protobuf": "^2.2.2",
     "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^10.0.1",
     "@fastify/env": "^5.0.2",
@@ -25,6 +24,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@bufbuild/protobuf": "^2.2.2",
     "@types/node": "^22.9.0",
     "concurrently": "^9.1.0",
     "fastify-tsconfig": "^2.0.0",

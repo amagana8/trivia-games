@@ -38,9 +38,6 @@ importers:
 
   bff:
     dependencies:
-      '@bufbuild/protobuf':
-        specifier: ^2.2.2
-        version: 2.2.5
       '@fastify/cookie':
         specifier: ^11.0.2
         version: 11.0.2
@@ -69,6 +66,9 @@ importers:
         specifier: ^3.24.2
         version: 3.24.2
     devDependencies:
+      '@bufbuild/protobuf':
+        specifier: ^2.2.2
+        version: 2.2.5
       '@types/node':
         specifier: ^22.9.0
         version: 22.13.14
