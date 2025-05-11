@@ -31,7 +31,7 @@ export const GridGame: React.FC = () => {
       grid: [],
       title: '',
     });
-  }, [currentUser?.id]);
+  }, [currentUser?.userId]);
 
   const handleShowGameList = useCallback(() => {
     setShowList(true);
@@ -47,12 +47,12 @@ export const GridGame: React.FC = () => {
             <List>
               {allgridGames.gridGames.map((gridGame) => (
                 <ListItem
-                  key={gridGame.id}
+                  key={gridGame.gridGameId}
                   onClick={() => {
                     setIsEditing(true);
                     setGridGame({
                       grid: gridGame.grid,
-                      id: gridGame.id,
+                      id: gridGame.gridGameId,
                       title: gridGame.title,
                     });
                   }}
