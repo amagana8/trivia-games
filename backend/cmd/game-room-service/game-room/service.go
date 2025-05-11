@@ -15,7 +15,7 @@ var ErrNotHost = errors.New("not the host")
 
 type GameRoom struct {
 	State         *pb.GameRoomState
-	Channels      []chan *pb.GameRoomState
+	Channels      map[string]chan *pb.GameRoomState
 	BuzzerChannel chan *pb.BuzzerUpdate
 	QuestionMap   map[string]int32
 }
@@ -45,9 +45,7 @@ func ResetAllowedPlayers(room *GameRoom) {
 
 }
 
-func (s *Service) CreateGameRoom(hostId string) *GameRoom {
-	hostChannel := make(chan *pb.GameRoomState)
-
+func (s *Service) CreateGameRoom(hostId string) *pb.GameRoomState {
 	gameRoom := &GameRoom{
 		State: &pb.GameRoomState{
 			GameRoomId:         uuid.New().String(),
@@ -56,23 +54,26 @@ func (s *Service) CreateGameRoom(hostId string) *GameRoom {
 			PlayerScores:       make(map[string]int32),
 			Status:             pb.GameStatus_LOBBY,
 		},
-		Channels:      []chan *pb.GameRoomState{hostChannel},
+		Channels:      make(map[string]chan *pb.GameRoomState),
 		BuzzerChannel: make(chan *pb.BuzzerUpdate),
 	}
 	s.roomMap[gameRoom.State.GameRoomId] = gameRoom
 
-	return gameRoom
+	return gameRoom.State
 }
 
-func (s *Service) JoinGameRoom(playerId string, roomId string) (*GameRoom, error) {
+func (s *Service) JoinGameRoom(userId string, roomId string) (*GameRoom, error) {
 	gameRoom, exists := s.roomMap[roomId]
 	if !exists {
 		return nil, ErrRoomNotFound
 	}
-	gameRoom.State.PlayerScores[playerId] = 0
 
-	playerChannel := make(chan *pb.GameRoomState)
-	gameRoom.Channels = append(gameRoom.Channels, playerChannel)
+	if userId != gameRoom.State.HostId {
+		gameRoom.State.PlayerScores[userId] = 0
+	}
+
+	userChannel := make(chan *pb.GameRoomState)
+	gameRoom.Channels[userId] = userChannel
 
 	return gameRoom, nil
 }

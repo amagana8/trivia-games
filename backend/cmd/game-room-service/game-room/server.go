@@ -22,13 +22,26 @@ func NewServer(service *Service) *Server {
 	}
 }
 
-func startGameRoomStream(userChannel chan *pb.GameRoomState, stream pb.GameRoomService_CreateGameRoomServer) (context.Context, chan bool) {
+func (s *Server) CreateGameRoom(ctx context.Context, in *pb.CreateGameRoomRequest) (*pb.GameRoomState, error) {
+	gameRoomState := s.Service.CreateGameRoom(in.HostId)
+
+	return gameRoomState, nil
+}
+
+func (s *Server) JoinGameRoom(in *pb.JoinGameRoomRequest, stream pb.GameRoomService_JoinGameRoomServer) error {
+	gameRoom, err := s.Service.JoinGameRoom(in.UserId, in.GameRoomId)
+	if errors.Is(err, ErrRoomNotFound) {
+		return status.Error(codes.NotFound, "room not found")
+	} else if err != nil {
+		return status.Error(codes.Internal, "failed to create or join game room")
+	}
+
 	ctx := stream.Context()
 	gameOverChannel := make(chan bool, 1)
 	go func() {
 		for {
 			select {
-			case gameRoomStateUpdate := <-userChannel:
+			case gameRoomStateUpdate := <-gameRoom.Channels[in.UserId]:
 				err := stream.SendMsg(gameRoomStateUpdate)
 				if err != nil {
 					fmt.Println("failed to send gameRoom state:", err)
@@ -43,33 +56,6 @@ func startGameRoomStream(userChannel chan *pb.GameRoomState, stream pb.GameRoomS
 			}
 		}
 	}()
-
-	return ctx, gameOverChannel
-}
-
-func (s *Server) CreateGameRoom(in *pb.CreateGameRoomRequest, stream pb.GameRoomService_CreateGameRoomServer) error {
-	gameRoom := s.Service.CreateGameRoom(in.HostId)
-
-	ctx, gameOverChannel := startGameRoomStream(gameRoom.Channels[0], stream)
-	BroadcastRoomUpdate(gameRoom)
-
-	select {
-	case <-ctx.Done():
-		return nil
-	case <-gameOverChannel:
-		return nil
-	}
-}
-
-func (s *Server) JoinGameRoom(in *pb.JoinGameRoomRequest, stream pb.GameRoomService_JoinGameRoomServer) error {
-	gameRoom, err := s.Service.JoinGameRoom(in.PlayerId, in.GameRoomId)
-	if errors.Is(err, ErrRoomNotFound) {
-		return status.Error(codes.NotFound, "room not found")
-	} else if err != nil {
-		return status.Error(codes.Internal, "failed to create or join game room")
-	}
-
-	ctx, gameOverChannel := startGameRoomStream(gameRoom.Channels[len(gameRoom.Channels)-1], stream)
 	BroadcastRoomUpdate(gameRoom)
 
 	select {

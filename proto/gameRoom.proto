@@ -8,7 +8,7 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
 service GameRoomService {
-    rpc CreateGameRoom(CreateGameRoomRequest) returns (stream GameRoomState);
+    rpc CreateGameRoom(CreateGameRoomRequest) returns (GameRoomState);
     rpc JoinGameRoom(JoinGameRoomRequest) returns (stream GameRoomState);
     rpc StartGame(StartGameRequest) returns (google.protobuf.Empty);
     rpc SelectQuestion(SelectQuestionRequest) returns (google.protobuf.Empty);
@@ -24,7 +24,7 @@ message CreateGameRoomRequest {
 
 
 message JoinGameRoomRequest {
-    string playerId = 1;
+    string userId = 1;
     string gameRoomId = 2;
 }
 
