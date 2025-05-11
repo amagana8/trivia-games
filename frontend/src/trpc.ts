@@ -1,5 +1,13 @@
-import { createTRPCClient, httpBatchLink, TRPCLink } from '@trpc/client';
+import {
+  createTRPCClient,
+  createWSClient,
+  httpBatchLink,
+  splitLink,
+  TRPCLink,
+  wsLink,
+} from '@trpc/client';
 import { observable, Unsubscribable } from '@trpc/server/observable';
+import superjson from 'superjson';
 
 import type { AppRouter } from '../../bff/src/router';
 
@@ -23,7 +31,7 @@ const refreshTokenLink: TRPCLink<AppRouter> = () => {
             ) {
               try {
                 const res = await fetch(
-                  `${import.meta.env.VITE_BFF_URL}/refresh_token`,
+                  `http://${import.meta.env.VITE_BFF_URL}/refresh_token`,
                   {
                     credentials: 'include',
                     method: 'POST',
@@ -55,14 +63,25 @@ const refreshTokenLink: TRPCLink<AppRouter> = () => {
   };
 };
 
+const wsClient = createWSClient({
+  url: `ws://${import.meta.env.VITE_BFF_URL}/trpc`,
+});
+
 export const trpc = createTRPCClient<AppRouter>({
   links: [
     refreshTokenLink,
-    httpBatchLink({
-      fetch(url, options) {
-        return fetch(url, { ...options, credentials: 'include' });
+    splitLink({
+      condition(op) {
+        return op.type === 'subscription';
       },
-      url: `${import.meta.env.VITE_BFF_URL}/trpc`,
+      false: httpBatchLink({
+        fetch(url, options) {
+          return fetch(url, { ...options, credentials: 'include' });
+        },
+        transformer: superjson,
+        url: `http://${import.meta.env.VITE_BFF_URL}/trpc`,
+      }),
+      true: wsLink<AppRouter>({ client: wsClient, transformer: superjson }),
     }),
   ],
 });

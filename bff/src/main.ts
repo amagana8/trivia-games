@@ -9,6 +9,7 @@ import { userService } from './modules/user/user.service.js';
 import { createContext } from './router/context.js';
 import { appRouter } from './router/index.js';
 import { sendAuthTokens } from './utils/sendAuthTokens.js';
+import ws from '@fastify/websocket';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -49,8 +50,11 @@ server.register(fastifyJwt, {
   secret: { public: server.config.JWT_PUBLIC_KEY },
 });
 
+server.register(ws);
+
 server.register(fastifyTRPCPlugin, {
   prefix: '/trpc',
+  useWSS: true,
   trpcOptions: { createContext, router: appRouter },
 });
 

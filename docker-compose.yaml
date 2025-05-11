@@ -47,6 +47,12 @@ services:
       - 27019:27017
     volumes:
       - user-service-db-volume:/data/db
+  game-room-service:
+    build:
+      context: ./
+      dockerfile: ./backend/cmd/game-room-service/Dockerfile
+    ports:
+      - 3005:3005
   bff:
     build:
       context: ./
@@ -57,6 +63,7 @@ services:
       - QUESTION_SERVICE_URL=question-service:3001
       - GAME_SERVICE_URL=game-service:3002
       - USER_SERVICE_URL=user-service:3004
+      - GAME_ROOM_SERVICE_URL=game-room-service:3005
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
       - COOKIE_KEY=${COOKIE_KEY}
 volumes:
