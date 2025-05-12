@@ -1,27 +1,38 @@
-import { atom } from 'jotai';
-import { atomFamily } from 'jotai/utils';
+import { api, atom, ion } from '@zedux/react';
 
 import { trpc } from '../trpc';
 import { gridGameAtom } from './gridGame';
 
-export const allQuestionsQueryAtom = atom(() =>
-  trpc.question.getMyQuestions.query(),
-);
+export const allQuestionsQueryAtom = atom('allQuestions', () => {
+  const promise = trpc.question.getMyQuestions.query();
 
-export const availableQuestionsAtom = atom(async (get) => {
-  const allQuestions = await get(allQuestionsQueryAtom);
-  const currentGridGameState = get(gridGameAtom);
-
-  const availableQuestions = { ...allQuestions.questionMap };
-  currentGridGameState.grid
-    .flatMap(({ questions }) => questions)
-    .forEach((questionId) => {
-      delete availableQuestions[questionId];
-    });
-
-  return Object.keys(availableQuestions);
+  return api(promise);
 });
 
-export const questionAtom = atomFamily((id: string) =>
-  atom(async (get) => (await get(allQuestionsQueryAtom)).questionMap[id]),
+export const availableQuestionsAtom = ion(
+  'availableQuestions',
+  ({ getNode, get }) => {
+    const node = getNode(allQuestionsQueryAtom);
+    const { data: allQuestions } = node.get();
+    const currentGridGameState = get(gridGameAtom);
+
+    const availableQuestions = { ...allQuestions?.questionMap };
+
+    currentGridGameState.grid
+      .flatMap(({ questions }) => questions)
+      .forEach((questionId) => {
+        delete availableQuestions[questionId];
+      });
+
+    return api(Object.keys(availableQuestions)).setPromise(node.promise);
+  },
 );
+
+export const questionAtom = ion('question', ({ getNode }, id: string) => {
+  const allQuestionsNode = getNode(allQuestionsQueryAtom);
+  const { data: allQuestions } = allQuestionsNode.get();
+
+  return api(allQuestions?.questionMap[id]).setPromise(
+    allQuestionsNode.promise,
+  );
+});

@@ -1,13 +1,9 @@
-import { atomWithRefresh } from 'jotai/utils';
+import { api, atom } from '@zedux/react';
 
 import { trpc } from '../trpc';
 
-export const currentUserAtom = atomWithRefresh(async () => {
-  try {
-    const currentUser = await trpc.user.getMe.query();
-    return currentUser;
-  } catch (error) {
-    console.error('Error fetching current user:', error);
-    return null;
-  }
+export const currentUserAtom = atom('currentUser', () => {
+  const promise = trpc.user.getMe.query();
+
+  return api(promise);
 });

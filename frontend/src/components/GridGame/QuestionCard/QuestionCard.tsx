@@ -1,6 +1,6 @@
 import { draggable } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { Card, CardContent } from '@mui/material';
-import { useAtomValue } from 'jotai';
+import { useAtomValue } from '@zedux/react';
 import { memo, Suspense, useEffect, useRef, useState } from 'react';
 
 import { questionAtom } from '../../../atoms/questions';
@@ -11,7 +11,7 @@ export const QuestionCard: React.FC<{ questionId: string }> = memo(
   ({ questionId }) => {
     const ref = useRef<HTMLDivElement>(null);
     const [dragging, setDragging] = useState(false);
-    const question = useAtomValue(questionAtom(questionId));
+    const question = useAtomValue(questionAtom, [questionId]);
     const [flipped, setFlipped] = useState(false);
 
     useEffect(() => {

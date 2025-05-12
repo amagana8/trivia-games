@@ -1,6 +1,6 @@
 import { Add, Edit } from '@mui/icons-material';
 import { Button, List, ListItem } from '@mui/material';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtomInstance, useAtomState, useAtomValue } from '@zedux/react';
 import { Suspense, useCallback, useState } from 'react';
 
 import { currentUserAtom } from '../../atoms/currentUser';
@@ -13,12 +13,12 @@ import { trpc } from '../../trpc';
 import * as styles from './GridGame.styles';
 
 export const GridGame: React.FC = () => {
-  const setGridGame = useSetAtom(gridGameAtom);
-  const [isEditing, setIsEditing] = useAtom(isEditingAtom);
+  const { set: setGridGame } = useAtomInstance(gridGameAtom);
+  const [isEditing, setIsEditing] = useAtomState(isEditingAtom);
   const [showList, setShowList] = useState(false);
-  const allgridGames = useAtomValue(allGridGamesQueryAtom);
+  const { data: allgridGames } = useAtomValue(allGridGamesQueryAtom);
   const gridGameState = useAtomValue(gridGameAtom);
-  const currentUser = useAtomValue(currentUserAtom);
+  const { data: currentUser } = useAtomValue(currentUserAtom);
 
   const handleCreateGridGame = useCallback(async () => {
     setIsEditing(true);
@@ -45,7 +45,7 @@ export const GridGame: React.FC = () => {
         {showList && (
           <Suspense fallback={<div>Loading...</div>}>
             <List>
-              {allgridGames.gridGames.map((gridGame) => (
+              {allgridGames?.gridGames.map((gridGame) => (
                 <ListItem
                   key={gridGame.gridGameId}
                   onClick={() => {

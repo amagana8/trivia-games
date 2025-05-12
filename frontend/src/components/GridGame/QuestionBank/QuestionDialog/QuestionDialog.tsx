@@ -12,7 +12,7 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import { useAtomValue } from 'jotai';
+import { useAtomValue } from '@zedux/react';
 import React, { memo, useState } from 'react';
 
 import { MediaType } from '../../../../../../bff/src/pb/question';

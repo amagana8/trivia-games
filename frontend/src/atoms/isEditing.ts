@@ -1,3 +1,3 @@
-import { atom } from 'jotai';
+import { atom } from '@zedux/react';
 
-export const isEditingAtom = atom(false);
+export const isEditingAtom = atom('isEditing', false);

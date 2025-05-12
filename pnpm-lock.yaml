@@ -109,15 +109,15 @@ importers:
       '@trpc/client':
         specifier: ^11.0.1
         version: 11.0.1(@trpc/server@11.0.1(typescript@5.8.2))(typescript@5.8.2)
+      '@zedux/react':
+        specifier: 2.0.0-rc.9
+        version: 2.0.0-rc.9(react@18.3.1)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
       immer:
         specifier: ^10.1.1
         version: 10.1.1
-      jotai:
-        specifier: ^2.10.3
-        version: 2.12.2(@types/react@18.3.20)(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -1090,6 +1090,14 @@ packages:
     resolution: {integrity: sha512-XMZjhS8poHpxfPg41rkc6eh3Mr2BZAFM7OzYN4jPZUicpJKv7uQAU2dLEqnyDcDllo04LbZIryb2fXwpr+pqPw==}
     engines: {node: '>=16.0.0'}
 
+  '@zedux/atoms@2.0.0-rc.9':
+    resolution: {integrity: sha512-JqCUGoPioFo+2XOTpkVFQQKvguvOr9uvqXSTbJQ/4IZ70yik+0UtD1g75oo2eyQPw6/ClUJcFaZ4aQhc63FKhQ==}
+
+  '@zedux/react@2.0.0-rc.9':
+    resolution: {integrity: sha512-/exTOZ5EHowGuIUwnPp2Ad3Birh//i9HcyszFQUOLyh+JUBg8/bESYKSTbi8N82Oj4Li60nqCat5TppOCn82QA==}
+    peerDependencies:
+      react: '>=18.0.0'
+
   abort-controller-x@0.4.3:
     resolution: {integrity: sha512-VtUwTNU8fpMwvWGn4xE93ywbogTYsuT+AUxAXOeelbXuQVIwNmC5YLeho9sH4vZ4ITW8414TTAOG1nW6uIVHCA==}
 
@@ -1634,18 +1642,6 @@ packages:
   isobject@3.0.1:
     resolution: {integrity: sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==}
     engines: {node: '>=0.10.0'}
-
-  jotai@2.12.2:
-    resolution: {integrity: sha512-oN8715y7MkjXlSrpyjlR887TOuc/NLZMs9gvgtfWH/JP47ChwO0lR2ijSwBvPMYyXRAPT+liIAhuBavluKGgtA==}
-    engines: {node: '>=12.20.0'}
-    peerDependencies:
-      '@types/react': '>=17.0.0'
-      react: '>=17.0.0'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      react:
-        optional: true
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -3281,6 +3277,13 @@ snapshots:
       - supports-color
       - typescript
 
+  '@zedux/atoms@2.0.0-rc.9': {}
+
+  '@zedux/react@2.0.0-rc.9(react@18.3.1)':
+    dependencies:
+      '@zedux/atoms': 2.0.0-rc.9
+      react: 18.3.1
+
   abort-controller-x@0.4.3: {}
 
   abstract-logging@2.0.1: {}
@@ -3843,11 +3846,6 @@ snapshots:
   isexe@2.0.0: {}
 
   isobject@3.0.1: {}
-
-  jotai@2.12.2(@types/react@18.3.20)(react@18.3.1):
-    optionalDependencies:
-      '@types/react': 18.3.20
-      react: 18.3.1
 
   js-tokens@4.0.0: {}
 

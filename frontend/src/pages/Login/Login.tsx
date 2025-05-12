@@ -1,6 +1,6 @@
 import { Button, TextField } from '@mui/material';
 import { useNavigate } from '@tanstack/react-router';
-import { useSetAtom } from 'jotai';
+import { useAtomInstance } from '@zedux/react';
 import React, { memo } from 'react';
 
 import { currentUserAtom } from '../../atoms/currentUser';
@@ -9,7 +9,7 @@ import { authFormStyles } from '../../styles/authForm.styles';
 import { trpc } from '../../trpc';
 
 export const Login: React.FC = memo(() => {
-  const refreshCurrentUser = useSetAtom(currentUserAtom);
+  const { invalidate: resetCurrentUser } = useAtomInstance(currentUserAtom);
   const navigate = useNavigate();
 
   return (
@@ -25,7 +25,7 @@ export const Login: React.FC = memo(() => {
             username: String(formData.get('username')),
           });
 
-          refreshCurrentUser();
+          resetCurrentUser();
           navigate({ to: '/' });
         } catch (error) {
           if (error instanceof Error) {

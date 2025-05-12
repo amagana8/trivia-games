@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useNavigate } from '@tanstack/react-router';
-import { useAtom } from 'jotai';
+import { useAtomInstance, useAtomValue } from '@zedux/react';
 import { memo, Suspense, useRef, useState } from 'react';
 
 import { currentUserAtom } from '../../atoms/currentUser';
@@ -20,7 +20,8 @@ export const NavBar: React.FC = memo(() => {
   const accountButtonRef = useRef<HTMLButtonElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const [currentUser, refreshCurrentUser] = useAtom(currentUserAtom);
+  const currentUser = useAtomValue(currentUserAtom);
+  const { invalidate: resetCurrentUser } = useAtomInstance(currentUserAtom);
 
   const navigate = useNavigate();
 
@@ -71,7 +72,7 @@ export const NavBar: React.FC = memo(() => {
         <MenuItem
           onClick={async () => {
             await trpc.user.signOut.mutate();
-            refreshCurrentUser();
+            resetCurrentUser();
             navigate({ to: '/' });
             setMenuOpen(false);
           }}

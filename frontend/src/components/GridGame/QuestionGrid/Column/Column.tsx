@@ -1,8 +1,8 @@
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { IconButton, TextField, Typography } from '@mui/material';
+import { useAtomInstance, useAtomValue } from '@zedux/react';
 import { produce } from 'immer';
-import { useAtomValue, useSetAtom } from 'jotai';
 import { memo } from 'react';
 
 import { gridGameAtom } from '../../../../atoms/gridGame';
@@ -17,7 +17,7 @@ const Column: React.FC<{
   categoryIndex: number;
 }> = memo(({ category, questions, categoryIndex }) => {
   const isEditing = useAtomValue(isEditingAtom);
-  const setGridGame = useSetAtom(gridGameAtom);
+  const { set: setGridGame } = useAtomInstance(gridGameAtom);
 
   return (
     <div className={styles.column}>

@@ -1,6 +1,6 @@
 import Add from '@mui/icons-material/Add';
 import { Button, Typography } from '@mui/material';
-import { useAtomValue } from 'jotai';
+import { useAtomValue } from '@zedux/react';
 import { memo, Suspense, useCallback, useState } from 'react';
 
 import { availableQuestionsAtom } from '../../../atoms/questions';

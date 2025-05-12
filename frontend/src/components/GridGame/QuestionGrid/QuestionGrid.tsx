@@ -2,8 +2,8 @@ import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/ad
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { IconButton, TextField, Typography } from '@mui/material';
+import { useAtomState, useAtomValue } from '@zedux/react';
 import { produce } from 'immer';
-import { useAtom, useAtomValue } from 'jotai';
 import { memo, useEffect } from 'react';
 
 import { gridGameAtom } from '../../../atoms/gridGame';
@@ -12,7 +12,7 @@ import { Column } from './Column/Column';
 import * as styles from './QuestionGrid.styles';
 
 export const QuestionGrid: React.FC = memo(() => {
-  const [gridGame, setGridGame] = useAtom(gridGameAtom);
+  const [gridGame, setGridGame] = useAtomState(gridGameAtom);
   const isEditing = useAtomValue(isEditingAtom);
 
   useEffect(() => {
