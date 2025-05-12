@@ -1,12 +1,15 @@
-import { api, atom, ion } from '@zedux/react';
+import { api, atom, injectPromise, ion } from '@zedux/react';
 
 import { trpc } from '../trpc';
 import { gridGameAtom } from './gridGame';
 
 export const allQuestionsQueryAtom = atom('allQuestions', () => {
-  const promise = trpc.question.getMyQuestions.query();
+  const getQuestionsApi = injectPromise(
+    () => trpc.question.getMyQuestions.query(),
+    [],
+  );
 
-  return api(promise);
+  return getQuestionsApi;
 });
 
 export const availableQuestionsAtom = ion(
