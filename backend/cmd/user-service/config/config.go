@@ -14,7 +14,7 @@ type Config struct {
 }
 
 func InitConfig() *Config {
-	privateKeyPEM := []byte(os.Getenv("ACCESS_TOKEN_KEY"))
+	privateKeyPEM := []byte(os.Getenv("ACCESS_TOKEN_PRIVATE_KEY"))
 
 	block, _ := pem.Decode(privateKeyPEM)
 	if block == nil {
