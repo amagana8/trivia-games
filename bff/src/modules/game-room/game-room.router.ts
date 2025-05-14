@@ -6,7 +6,6 @@ import {
 import { gridGameService } from '../grid-game/grid-game.service.js';
 import { gameRoomService } from './game-room.service.js';
 import {
-  createGameRoomRequestValidator,
   joinGameRoomRequestValidator,
   judgeAnswerRequestValidator,
   selectQuestionRequestValidator,
@@ -15,11 +14,9 @@ import {
 } from './game-room.validators.js';
 
 export const gameRoomRouter = router({
-  createGameRoom: publicProcedure
-    .input(createGameRoomRequestValidator)
-    .mutation(({ ctx, signal }) =>
-      gameRoomService.createGameRoom({ hostId: ctx.userId }, { signal }),
-    ),
+  createGameRoom: publicProcedure.mutation(({ ctx, signal }) =>
+    gameRoomService.createGameRoom({ hostId: ctx.userId }, { signal }),
+  ),
   joinGameRoom: protectedProcedure
     .input(joinGameRoomRequestValidator)
     .subscription(({ ctx, input, signal }) =>

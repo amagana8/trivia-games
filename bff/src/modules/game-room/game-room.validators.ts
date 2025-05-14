@@ -1,11 +1,6 @@
 import { z } from 'zod';
 
-export const createGameRoomRequestValidator = z.object({
-  hostId: z.string(),
-});
-
 export const joinGameRoomRequestValidator = z.object({
-  playerId: z.string(),
   gameRoomId: z.string(),
 });
 
