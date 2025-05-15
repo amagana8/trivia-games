@@ -73,7 +73,7 @@ server.post('/refresh_token', async (request, reply) => {
   const newTokens = await userService.refreshToken({ refreshToken: value });
   sendAuthTokens(reply, newTokens);
 
-  return reply.status(200);
+  return reply.status(200).send();
 });
 
 try {
