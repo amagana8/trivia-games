@@ -20,8 +20,8 @@ export const NavBar: React.FC = memo(() => {
   const accountButtonRef = useRef<HTMLButtonElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const currentUser = useAtomValue(currentUserAtom);
-  const { invalidate: resetCurrentUser } = useAtomInstance(currentUserAtom);
+  const { data: currentUser } = useAtomValue(currentUserAtom);
+  const userAtomInstance = useAtomInstance(currentUserAtom);
 
   const navigate = useNavigate();
 
@@ -72,7 +72,7 @@ export const NavBar: React.FC = memo(() => {
         <MenuItem
           onClick={async () => {
             await trpc.user.signOut.mutate();
-            resetCurrentUser();
+            userAtomInstance.invalidate();
             navigate({ to: '/' });
             setMenuOpen(false);
           }}

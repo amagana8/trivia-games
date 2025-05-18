@@ -14,7 +14,9 @@ export const currentUserAtom = atom('currentUser', () => {
       }
     },
     [],
-    { runOnInvalidate: true },
+    {
+      runOnInvalidate: true,
+    },
   );
 
   return getMeApi;

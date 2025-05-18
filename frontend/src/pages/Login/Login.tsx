@@ -9,7 +9,8 @@ import { authFormStyles } from '../../styles/authForm.styles';
 import { trpc } from '../../trpc';
 
 export const Login: React.FC = memo(() => {
-  const { invalidate: resetCurrentUser } = useAtomInstance(currentUserAtom);
+  const userAtomInstance = useAtomInstance(currentUserAtom);
+
   const navigate = useNavigate();
 
   return (
@@ -25,11 +26,12 @@ export const Login: React.FC = memo(() => {
             username: String(formData.get('username')),
           });
 
-          resetCurrentUser();
+          userAtomInstance.invalidate();
           navigate({ to: '/' });
         } catch (error) {
           if (error instanceof Error) {
             alert(error.message);
+            console.error(error);
           }
         }
       }}

@@ -9,7 +9,7 @@ import { authFormStyles } from '../../styles/authForm.styles';
 import { trpc } from '../../trpc';
 
 export const SignUp: React.FC = memo(() => {
-  const { invalidate: resetCurrentUser } = useAtomInstance(currentUserAtom);
+  const userAtomInstance = useAtomInstance(currentUserAtom);
 
   const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ export const SignUp: React.FC = memo(() => {
           }
           return;
         }
-        resetCurrentUser();
+        userAtomInstance.invalidate();
         navigate({ to: '/' });
       }}
     >
