@@ -11,11 +11,9 @@ import {
 } from './grid-game.validators.js';
 
 export const gridGameRouter = router({
-  createGridGame: protectedProcedure
-    .input(gridGameInputValidator)
-    .mutation(({ input, ctx }) =>
-      gridGameService.createGridGame({ ...input, authorId: ctx.userId }),
-    ),
+  createGridGame: protectedProcedure.mutation(({ ctx }) =>
+    gridGameService.createGridGame({ authorId: ctx.userId }),
+  ),
   deleteGridGame: protectedProcedure
     .input(gridGameValidator.pick({ gridGameId: true }))
     .query(({ input: { gridGameId }, ctx }) =>

@@ -63,12 +63,7 @@ func responseGridToModelGrid(responseGrid []*pb.Column) ([]model.Column, error) 
 }
 
 func (s *Server) CreateGridGame(ctx context.Context, in *pb.CreateGridGameRequest) (*pb.GridGame, error) {
-	input, err := responseGridToModelGrid(in.Grid)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid grid")
-	}
-
-	gridGame, err := s.Service.CreateGridGame(ctx, in.AuthorId, in.Title, input)
+	gridGame, err := s.Service.CreateGridGame(ctx, in.AuthorId)
 	if errors.Is(err, primitive.ErrInvalidHex) {
 		return nil, status.Error(codes.InvalidArgument, "invalid author id")
 	} else if err != nil {

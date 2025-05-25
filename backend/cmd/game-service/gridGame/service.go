@@ -23,7 +23,7 @@ func NewService(repository *Repository) *Service {
 	}
 }
 
-func (s *Service) CreateGridGame(ctx context.Context, authorId string, title string, grid []model.Column) (*model.GridGame, error) {
+func (s *Service) CreateGridGame(ctx context.Context, authorId string) (*model.GridGame, error) {
 	authorObjectId, err := primitive.ObjectIDFromHex(authorId)
 	if err != nil {
 		return nil, err
@@ -32,9 +32,13 @@ func (s *Service) CreateGridGame(ctx context.Context, authorId string, title str
 	now := time.Now().UTC()
 
 	gridGame := model.GridGame{
-		AuthorId:  authorObjectId,
-		Grid:      grid,
-		Title:     title,
+		AuthorId: authorObjectId,
+		Grid: []model.Column{
+			{
+				Category:  "",
+				Questions: make([]primitive.ObjectID, 5),
+			},
+		},
 		CreatedAt: &now,
 		UpdatedAt: &now,
 	}

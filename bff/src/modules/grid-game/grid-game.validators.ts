@@ -14,6 +14,5 @@ export const gridGameValidator = z.object({
 export const gridGameInputValidator = gridGameValidator.omit({
   authorId: true,
   createdAt: true,
-  gridGameId: true,
   updatedAt: true,
 });

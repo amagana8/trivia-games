@@ -29,8 +29,6 @@ message GridGame {
 
 message CreateGridGameRequest {
     string authorId = 1;
-    string title = 2;
-    repeated Column grid = 3;
 }
 
 message UpdateGridGameRequest {

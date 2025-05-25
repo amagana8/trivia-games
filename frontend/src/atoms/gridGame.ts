@@ -12,11 +12,12 @@ export const allGridGamesQueryAtom = atom('allGridGames', () => {
   return gridGamesPromise;
 });
 
-export const gridGameAtom = atom<{ id: string; title: string; grid: Column[] }>(
-  'gridGame',
-  {
-    grid: [{ category: '', questions: ['', '', '', '', ''] }],
-    id: '',
-    title: '',
-  },
-);
+export const gridGameAtom = atom<{
+  gridGameId: string;
+  title: string;
+  grid: Column[];
+}>('gridGame', {
+  grid: [{ category: '', questions: ['', '', '', '', ''] }],
+  gridGameId: '',
+  title: '',
+});
