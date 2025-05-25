@@ -4,12 +4,14 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"time"
 
 	"github.com/amagana8/trivia-games/backend/cmd/game-service/gridGame"
 	"github.com/amagana8/trivia-games/backend/pkg/application"
+	"github.com/amagana8/trivia-games/backend/pkg/interceptors"
 	"github.com/amagana8/trivia-games/backend/pkg/pb"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -21,6 +23,8 @@ func main() {
 	mongoDatabase := flag.String("mongoDatabase", "gameServiceDB", "Database name")
 	serverPort := flag.String("serverPort", ":3002", "HTTP server network port")
 	flag.Parse()
+
+	logger := log.New(os.Stderr, "", log.Ldate|log.Ltime|log.Lshortfile)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
@@ -34,7 +38,9 @@ func main() {
 	gridGameService := gridGame.NewService(gridGameRepository)
 	gridGameServer := gridGame.NewServer(gridGameService)
 
-	server := grpc.NewServer()
+	server := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(interceptors.UnaryServerLogging(logger)),
+	)
 	pb.RegisterGridGameServiceServer(server, gridGameServer)
 
 	app := application.New(*serverPort, client, server)

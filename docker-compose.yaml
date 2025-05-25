@@ -6,6 +6,8 @@ services:
     command: ['-mongoURI=mongodb://question-service-db:27017']
     ports:
       - 3001:3001
+    environment:
+      - GRPC_GO_LOG_SEVERITY_LEVEL=info
     depends_on:
       - question-service-db
   question-service-db:
@@ -21,6 +23,8 @@ services:
     command: ['-mongoURI=mongodb://game-service-db:27017']
     ports:
       - 3002:3002
+    environment:
+      - GRPC_GO_LOG_SEVERITY_LEVEL=info
     depends_on:
       - game-service-db
   game-service-db:
@@ -39,6 +43,7 @@ services:
     environment:
       - ACCESS_TOKEN_PRIVATE_KEY=${ACCESS_TOKEN_PRIVATE_KEY}
       - REFRESH_TOKEN_KEY=${REFRESH_TOKEN_KEY}
+      - GRPC_GO_LOG_SEVERITY_LEVEL=info
     depends_on:
       - user-service-db
   user-service-db:
@@ -53,6 +58,8 @@ services:
       dockerfile: ./backend/cmd/game-room-service/Dockerfile
     ports:
       - 3005:3005
+    environment:
+      - GRPC_GO_LOG_SEVERITY_LEVEL=info
   bff:
     build:
       context: ./
