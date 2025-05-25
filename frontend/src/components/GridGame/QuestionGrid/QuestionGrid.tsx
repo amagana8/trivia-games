@@ -2,8 +2,7 @@ import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/ad
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { IconButton, TextField, Typography } from '@mui/material';
-import { useAtomState, useAtomValue } from '@zedux/react';
-import { produce } from 'immer';
+import { useAtomInstance, useAtomValue } from '@zedux/react';
 import { memo, useEffect } from 'react';
 
 import { gridGameAtom } from '../../../atoms/gridGame';
@@ -12,7 +11,9 @@ import { Column } from './Column/Column';
 import * as styles from './QuestionGrid.styles';
 
 export const QuestionGrid: React.FC = memo(() => {
-  const [gridGame, setGridGame] = useAtomState(gridGameAtom);
+  const gridGame = useAtomValue(gridGameAtom);
+  const { moveQuestion, changeTitle, popColumn, pushColumn } =
+    useAtomInstance(gridGameAtom).exports;
   const isEditing = useAtomValue(isEditingAtom);
 
   useEffect(() => {
@@ -21,20 +22,20 @@ export const QuestionGrid: React.FC = memo(() => {
         const origin = location.initial.dropTargets[0];
         const destination = location.current.dropTargets[0];
 
-        setGridGame(
-          produce((draft) => {
-            if (origin) {
-              draft.grid[Number(origin.data.categoryIndex)].questions[
-                Number(origin.data.questionIndex)
-              ] = '';
-            }
-
-            if (destination) {
-              draft.grid[Number(destination.data.categoryIndex)].questions[
-                Number(destination.data.questionIndex)
-              ] = String(source.data.questionId);
-            }
-          }),
+        moveQuestion(
+          String(source.data.questionId),
+          origin
+            ? {
+                categoryIndex: Number(origin.data.categoryIndex),
+                questionIndex: Number(origin.data.questionIndex),
+              }
+            : undefined,
+          destination
+            ? {
+                categoryIndex: Number(destination?.data.categoryIndex),
+                questionIndex: Number(destination?.data.questionIndex),
+              }
+            : undefined,
         );
       },
     });
@@ -46,12 +47,7 @@ export const QuestionGrid: React.FC = memo(() => {
         {isEditing ? (
           <TextField
             value={gridGame.title}
-            onChange={(e) =>
-              setGridGame((prevState) => ({
-                ...prevState,
-                title: e.target.value,
-              }))
-            }
+            onChange={(e) => changeTitle(e.target.value)}
             variant="standard"
             placeholder="Title"
           />
@@ -73,30 +69,11 @@ export const QuestionGrid: React.FC = memo(() => {
 
       {isEditing && (
         <div className={styles.gridControls}>
-          <IconButton
-            onClick={() =>
-              setGridGame(
-                produce((draft) => {
-                  draft.grid.pop();
-                }),
-              )
-            }
-          >
+          <IconButton onClick={popColumn}>
             <RemoveCircleOutlineIcon />
           </IconButton>
 
-          <IconButton
-            onClick={() =>
-              setGridGame(
-                produce((draft) => {
-                  draft.grid.push({
-                    category: '',
-                    questions: ['', '', '', '', ''],
-                  });
-                }),
-              )
-            }
-          >
+          <IconButton onClick={pushColumn}>
             <AddCircleOutlineIcon />
           </IconButton>
         </div>

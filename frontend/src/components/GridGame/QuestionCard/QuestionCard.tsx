@@ -28,6 +28,10 @@ export const QuestionCard: React.FC<{ questionId: string }> = memo(
       });
     }, [questionId]);
 
+    if (!question) {
+      return null;
+    }
+
     return (
       <>
         <Card

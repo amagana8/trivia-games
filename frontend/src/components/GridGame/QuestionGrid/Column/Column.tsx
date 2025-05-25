@@ -2,7 +2,6 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { IconButton, TextField, Typography } from '@mui/material';
 import { useAtomInstance, useAtomValue } from '@zedux/react';
-import { produce } from 'immer';
 import { memo } from 'react';
 
 import { gridGameAtom } from '../../../../atoms/gridGame';
@@ -17,22 +16,17 @@ const Column: React.FC<{
   categoryIndex: number;
 }> = memo(({ category, questions, categoryIndex }) => {
   const isEditing = useAtomValue(isEditingAtom);
-  const { set: setGridGame } = useAtomInstance(gridGameAtom);
+  const { editCategoryTitle, popQuestion, pushQuestion } =
+    useAtomInstance(gridGameAtom).exports;
 
   return (
     <div className={styles.column}>
       {isEditing ? (
         <TextField
-          value={category}
+          defaultValue={category}
           variant="standard"
           placeholder="Category"
-          onChange={(e) =>
-            setGridGame(
-              produce((draft) => {
-                draft.grid[categoryIndex].category = e.target.value;
-              }),
-            )
-          }
+          onChange={(e) => editCategoryTitle(categoryIndex, e.target.value)}
         />
       ) : (
         <Typography variant="h3">{category}</Typography>
@@ -53,27 +47,11 @@ const Column: React.FC<{
       ))}
       {isEditing && (
         <div className={styles.controls}>
-          <IconButton
-            onClick={() => {
-              setGridGame(
-                produce((draft) => {
-                  draft.grid[categoryIndex].questions.pop();
-                }),
-              );
-            }}
-          >
+          <IconButton onClick={() => popQuestion(categoryIndex)}>
             <RemoveCircleOutlineIcon />
           </IconButton>
 
-          <IconButton
-            onClick={() => {
-              setGridGame(
-                produce((draft) => {
-                  draft.grid[categoryIndex].questions.push('');
-                }),
-              );
-            }}
-          >
+          <IconButton onClick={() => pushQuestion(categoryIndex)}>
             <AddCircleOutlineIcon />
           </IconButton>
         </div>
