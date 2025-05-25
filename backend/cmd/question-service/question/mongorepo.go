@@ -68,6 +68,26 @@ func (r *Repository) FindByIds(ctx context.Context, ids []string) ([]model.Quest
 	return questions, nil
 }
 
+func (r *Repository) FindByAuthorId(ctx context.Context, authorId string) ([]model.Question, error) {
+	authorObjectId, err := primitive.ObjectIDFromHex(authorId)
+	if err != nil {
+		return nil, err
+	}
+
+	questions := []model.Question{}
+	questionCursor, err := r.Collection.Find(ctx, bson.M{"authorId": authorObjectId})
+	if err != nil {
+		return nil, err
+	}
+
+	err = questionCursor.All(ctx, &questions)
+	if err != nil {
+		return nil, err
+	}
+
+	return questions, nil
+}
+
 func (r *Repository) FindAll(ctx context.Context) ([]model.Question, error) {
 	questions := []model.Question{}
 	questionCursor, err := r.Collection.Find(ctx, bson.M{})

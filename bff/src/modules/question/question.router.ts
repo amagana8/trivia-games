@@ -4,7 +4,6 @@ import {
   publicProcedure,
   router,
 } from '../../router/trpc.js';
-import { userService } from '../user/user.service.js';
 import { questionService } from './question.service.js';
 import {
   questionInputValidator,
@@ -34,10 +33,11 @@ export const questionRouter = router({
     return { questionMap };
   }),
   getMyQuestions: protectedProcedure.query(async ({ ctx }) => {
-    const { questions } = await userService.getMe({ userId: ctx.userId });
+    const { questions } = await questionService.getQuestionsByAuthorId({
+      authorId: ctx.userId,
+    });
 
-    const res = await questionService.getQuestions({ questionIds: questions });
-    const questionMap = res.questions.reduce(
+    const questionMap = questions.reduce(
       (acc: Record<string, Question>, question) => {
         acc[question.questionId] = question;
         return acc;

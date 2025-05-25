@@ -53,6 +53,26 @@ func (r *Repository) FindByIds(ctx context.Context, ids []string) ([]model.GridG
 	return games, nil
 }
 
+func (r *Repository) FindByAuthorId(ctx context.Context, authorId string) ([]model.GridGame, error) {
+	authorObjectId, err := primitive.ObjectIDFromHex(authorId)
+	if err != nil {
+		return nil, err
+	}
+
+	games := []model.GridGame{}
+	gameCursor, err := r.Collection.Find(ctx, bson.M{"authorId": authorObjectId})
+	if err != nil {
+		return nil, err
+	}
+
+	err = gameCursor.All(ctx, &games)
+	if err != nil {
+		return nil, err
+	}
+
+	return games, nil
+}
+
 func (r *Repository) FindAll(ctx context.Context) ([]model.GridGame, error) {
 	games := []model.GridGame{}
 	gameCursor, err := r.Collection.Find(ctx, bson.M{})

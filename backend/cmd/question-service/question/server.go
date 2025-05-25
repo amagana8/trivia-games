@@ -83,6 +83,23 @@ func (s *Server) GetQuestions(ctx context.Context, in *pb.GetQuestionsRequest) (
 	return res, nil
 }
 
+func (s *Server) GetQuestionsByAuthorId(ctx context.Context, in *pb.GetQuestionsByAuthorIdRequest) (*pb.QuestionList, error) {
+	questions, err := s.Service.GetQuestionsByAuthorId(ctx, in.AuthorId)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, status.Error(codes.NotFound, "questions not found")
+	} else if err != nil {
+		return nil, status.Error(codes.Internal, "failed to get questions by author id")
+	}
+
+	res := &pb.QuestionList{}
+	res.Questions = make([]*pb.Question, len(*questions))
+	for i, q := range *questions {
+		res.Questions[i] = questionToResponse(&q)
+	}
+
+	return res, nil
+}
+
 func (s *Server) GetAllQuestions(ctx context.Context, in *pb.GetAllQuestionsRequest) (*pb.QuestionList, error) {
 	questions, err := s.Service.GetAllQuestions(ctx)
 	if err != nil {

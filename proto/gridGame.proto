@@ -8,6 +8,7 @@ service GridGameService {
     rpc CreateGridGame(CreateGridGameRequest) returns (GridGame);
     rpc GetGridGame(GridGameId) returns (GridGame);
     rpc GetGridGames(GetGridGamesRequest) returns (GridGameList);
+    rpc GetGridGamesByAuthorId(GetGridGamesByAuthorIdRequest) returns (GridGameList);
     rpc GetAllGridGames(GetAllGridGamesRequest) returns (GridGameList);
     rpc UpdateGridGame(UpdateGridGameRequest) returns (GridGame);
     rpc DeleteGridGame(DeleteGridGameRequest) returns (DeleteGridGameResponse);
@@ -40,6 +41,10 @@ message UpdateGridGameRequest {
 
 message GridGameId {
     string gridGameId = 1;
+}
+
+message GetGridGamesByAuthorIdRequest {
+    string authorId = 1;
 }
 
 message GetGridGamesRequest {
