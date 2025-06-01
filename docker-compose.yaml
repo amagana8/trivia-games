@@ -72,7 +72,6 @@ services:
       - USER_SERVICE_URL=user-service:3004
       - GAME_ROOM_SERVICE_URL=game-room-service:3005
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
-      - COOKIE_KEY=${COOKIE_KEY}
 volumes:
   question-service-db-volume:
   game-service-db-volume:

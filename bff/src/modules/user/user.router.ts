@@ -6,6 +6,7 @@ import {
 import { sendAuthTokens } from '../../utils/sendAuthTokens.js';
 import { userService } from './user.service.js';
 import { signUpRequestValidator } from './user.validators.js';
+import { serialize } from 'cookie';
 
 export const userRouter = router({
   changePassword: protectedProcedure
@@ -31,8 +32,11 @@ export const userRouter = router({
       return;
     }),
   signOut: publicProcedure.mutation(async ({ ctx }) => {
-    ctx.res.clearCookie('refreshToken', { path: '/refresh_token' });
-    ctx.res.clearCookie('accessToken');
+    ctx.res.header(
+      'set-cookie',
+      serialize('refreshToken', '', { path: '/refresh_token' }),
+    );
+    ctx.res.header('set-cookie', serialize('accessToken', ''));
 
     return;
   }),
