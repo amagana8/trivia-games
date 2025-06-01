@@ -1,8 +1,4 @@
-import {
-  protectedProcedure,
-  publicProcedure,
-  router,
-} from '../../router/trpc.js';
+import { protectedProcedure, router } from '../../router/trpc.js';
 import { gridGameService } from '../grid-game/grid-game.service.js';
 import { gameRoomService } from './game-room.service.js';
 import {
@@ -14,7 +10,7 @@ import {
 } from './game-room.validators.js';
 
 export const gameRoomRouter = router({
-  createGameRoom: publicProcedure.mutation(({ ctx, signal }) =>
+  createGameRoom: protectedProcedure.mutation(({ ctx, signal }) =>
     gameRoomService.createGameRoom({ hostId: ctx.userId }, { signal }),
   ),
   joinGameRoom: protectedProcedure
