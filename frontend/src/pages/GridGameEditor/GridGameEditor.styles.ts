@@ -17,10 +17,3 @@ export const footer = css(() => ({
   gridArea: 'footer',
   justifyContent: 'flex-end',
 }));
-
-export const gridGameSelect = css(({ theme }) => ({
-  alignItems: 'center',
-  display: 'flex',
-  gap: theme.spacing(2),
-  justifyContent: 'center',
-}));

@@ -5,7 +5,8 @@ import {
 } from '@tanstack/react-router';
 
 import { GameSelect } from './pages/GameSelect/GameSelect';
-import { GridGame } from './pages/GridGame/GridGame';
+import { GridGameEditor } from './pages/GridGameEditor/GridGameEditor';
+import { GridGameSelect } from './pages/GridGameSelect/GridGameSelect';
 import { Home } from './pages/Home/Home';
 import { Lobby } from './pages/Lobby/Lobby';
 import { Login } from './pages/Login/Login';
@@ -41,10 +42,16 @@ const selectGameRoute = createRoute({
   path: '/select-game',
 });
 
-const gridGameRoute = createRoute({
-  component: GridGame,
+const gridGameSelectRoute = createRoute({
+  component: GridGameSelect,
   getParentRoute: () => rootRoute,
   path: '/grid-game',
+});
+
+const gridGameEditorRoute = createRoute({
+  component: GridGameEditor,
+  getParentRoute: () => rootRoute,
+  path: '/grid-game/$gridGameId',
 });
 
 const selectPlayRoute = createRoute({
@@ -64,7 +71,8 @@ const routeTree = rootRoute.addChildren([
   signUpRoute,
   loginRoute,
   selectGameRoute,
-  gridGameRoute,
+  gridGameSelectRoute,
+  gridGameEditorRoute,
   selectPlayRoute,
   lobbyRoute,
 ]);
