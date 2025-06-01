@@ -1,7 +1,6 @@
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import fastifyEnv from '@fastify/env';
-import fastifyJwt from '@fastify/jwt';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import fastify from 'fastify';
 
@@ -40,14 +39,6 @@ server.register(cors, {
 
 server.register(cookie, {
   secret: server.config.COOKIE_KEY,
-});
-
-server.register(fastifyJwt, {
-  cookie: {
-    cookieName: 'accessToken',
-    signed: true,
-  },
-  secret: { public: server.config.JWT_PUBLIC_KEY },
 });
 
 server.register(ws);
