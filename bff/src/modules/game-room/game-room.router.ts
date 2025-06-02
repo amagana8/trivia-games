@@ -42,6 +42,7 @@ export const gameRoomRouter = router({
         {
           hostId: ctx.userId,
           gameRoomId: input.gameRoomId,
+          gameId: input.gameId,
           questionMap,
         },
         { signal },

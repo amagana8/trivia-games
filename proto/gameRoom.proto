@@ -31,7 +31,8 @@ message JoinGameRoomRequest {
 message StartGameRequest {
     string hostId = 1;
     string gameRoomId = 2;
-    map<string, int32> questionMap = 3;
+    string gameId = 3;
+    map<string, int32> questionMap = 4;
 }
 
 enum GameStatus {

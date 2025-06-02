@@ -9,6 +9,12 @@ import { produce } from 'immer';
 
 import { trpc } from '../trpc';
 
+const EMPTY_GRID_GAME = {
+  grid: [{ category: '', questions: ['', '', '', '', ''] }],
+  gridGameId: '',
+  title: '',
+};
+
 export const allGridGamesQueryAtom = atom('allGridGames', () => {
   const gridGamesPromise = injectPromise(
     () => trpc.gridGame.getMyGridGames.query(),
@@ -18,17 +24,19 @@ export const allGridGamesQueryAtom = atom('allGridGames', () => {
   return gridGamesPromise;
 });
 
+export const gridGameQueryAtom = atom('gridGameQuery', (gridGameId: string) => {
+  return injectPromise(
+    () => trpc.gridGame.getGridGame.query({ gridGameId }),
+    [gridGameId],
+    { initialData: EMPTY_GRID_GAME },
+  );
+});
+
 export const gridGameAtom = atom('gridGame', (gridGameId: string) => {
   const queryAtom = injectAtomInstance(allGridGamesQueryAtom);
   const initialGridGameState = queryAtom.get().data?.[gridGameId];
 
-  const gridGame = injectSignal(
-    initialGridGameState ?? {
-      grid: [{ category: '', questions: ['', '', '', '', ''] }],
-      gridGameId,
-      title: '',
-    },
-  );
+  const gridGame = injectSignal(initialGridGameState ?? EMPTY_GRID_GAME);
 
   const editCategoryTitle = (categoryIndex: number, title: string) => {
     gridGame.set(

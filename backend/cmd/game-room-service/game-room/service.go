@@ -78,7 +78,7 @@ func (s *Service) JoinGameRoom(userId string, roomId string) (*GameRoom, error) 
 	return gameRoom, nil
 }
 
-func (s *Service) StartGame(ctx context.Context, roomId string, hostId string, questionMap map[string]int32) error {
+func (s *Service) StartGame(ctx context.Context, roomId string, hostId string, gameId string, questionMap map[string]int32) error {
 	room, exists := s.roomMap[roomId]
 	if !exists {
 		return ErrRoomNotFound
@@ -89,6 +89,7 @@ func (s *Service) StartGame(ctx context.Context, roomId string, hostId string, q
 
 	room.State.Status = pb.GameStatus_QUESTION_SELECT
 	room.QuestionMap = questionMap
+	room.State.GameId = gameId
 	room.State.AllowedPlayers = make([]string, len(room.State.PlayerScores))
 	BroadcastRoomUpdate(room)
 

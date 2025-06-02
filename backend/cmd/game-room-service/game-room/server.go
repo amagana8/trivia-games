@@ -67,7 +67,7 @@ func (s *Server) JoinGameRoom(in *pb.JoinGameRoomRequest, stream pb.GameRoomServ
 }
 
 func (s *Server) StartGame(ctx context.Context, in *pb.StartGameRequest) (*emptypb.Empty, error) {
-	err := s.Service.StartGame(ctx, in.GameRoomId, in.HostId, in.QuestionMap)
+	err := s.Service.StartGame(ctx, in.GameRoomId, in.HostId, in.GameId, in.QuestionMap)
 	if errors.Is(err, ErrRoomNotFound) {
 		return nil, status.Error(codes.NotFound, "room not found")
 	} else if errors.Is(err, ErrNotHost) {

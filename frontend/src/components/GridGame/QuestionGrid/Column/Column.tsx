@@ -14,9 +14,12 @@ const Column: React.FC<{
   questions: string[];
   categoryIndex: number;
   isEditing: boolean;
-}> = memo(({ category, questions, categoryIndex, isEditing }) => {
-  const { editCategoryTitle, popQuestion, pushQuestion } =
-    useAtomInstance(gridGameAtom).exports;
+  gridGameId: string;
+}> = memo(({ category, questions, categoryIndex, isEditing, gridGameId }) => {
+  const { editCategoryTitle, popQuestion, pushQuestion } = useAtomInstance(
+    gridGameAtom,
+    [gridGameId],
+  ).exports;
 
   return (
     <div className={styles.column}>

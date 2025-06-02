@@ -7,13 +7,15 @@ import { memo, useEffect } from 'react';
 
 import { gridGameAtom } from '../../../atoms/gridGame';
 import { Column } from './Column/Column';
+import { getGridGame } from './getters';
 import * as styles from './QuestionGrid.styles';
 
 export const QuestionGrid: React.FC<{
   isEditing?: boolean;
   gridGameId: string;
-}> = memo(({ isEditing = false, gridGameId }) => {
-  const gridGame = useAtomValue(gridGameAtom, [gridGameId]);
+  gameRoomId?: string;
+}> = memo(({ isEditing = false, gridGameId, gameRoomId }) => {
+  const gridGame = useAtomValue(getGridGame, [gridGameId, gameRoomId]);
   const { moveQuestion, changeTitle, popColumn, pushColumn } = useAtomInstance(
     gridGameAtom,
     [gridGameId],
@@ -66,6 +68,7 @@ export const QuestionGrid: React.FC<{
               questions={questions}
               categoryIndex={index}
               isEditing={isEditing}
+              gridGameId={gridGameId}
             />
           ))}
         </div>
