@@ -1,4 +1,11 @@
-import { api, atom, injectPromise, ion } from '@zedux/react';
+import {
+  api,
+  atom,
+  injectAtomInstance,
+  injectAtomValue,
+  injectPromise,
+  ion,
+} from '@zedux/react';
 
 import { trpc } from '../trpc';
 import { gridGameAtom } from './gridGame';
@@ -12,12 +19,12 @@ export const allQuestionsQueryAtom = atom('allQuestions', () => {
   return getQuestionsApi;
 });
 
-export const availableQuestionsAtom = ion(
+export const availableQuestionsAtom = atom(
   'availableQuestions',
-  ({ getNode, get }) => {
-    const node = getNode(allQuestionsQueryAtom);
-    const { data: allQuestions } = node.get();
-    const currentGridGameState = get(gridGameAtom);
+  (gridGameId: string) => {
+    const questionsAtomInstance = injectAtomInstance(allQuestionsQueryAtom);
+    const { data: allQuestions } = questionsAtomInstance.get();
+    const currentGridGameState = injectAtomValue(gridGameAtom, [gridGameId]);
 
     const availableQuestions = { ...allQuestions?.questionMap };
 
@@ -27,7 +34,9 @@ export const availableQuestionsAtom = ion(
         delete availableQuestions[questionId];
       });
 
-    return api(Object.keys(availableQuestions)).setPromise(node.promise);
+    return api(Object.keys(availableQuestions)).setPromise(
+      questionsAtomInstance.promise,
+    );
   },
 );
 

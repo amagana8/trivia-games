@@ -1,4 +1,5 @@
 import { Button } from '@mui/material';
+import { useParams } from '@tanstack/react-router';
 import { useAtomValue } from '@zedux/react';
 import { memo } from 'react';
 
@@ -9,13 +10,14 @@ import { trpc } from '../../trpc';
 import * as styles from './GridGameEditor.styles';
 
 export const GridGameEditor: React.FC = memo(() => {
-  const gridGame = useAtomValue(gridGameAtom);
+  const { gridGameId } = useParams({ strict: false });
+  const gridGame = useAtomValue(gridGameAtom, [gridGameId]);
 
   return (
     <div className={styles.root}>
-      <QuestionBank />
+      <QuestionBank gridGameId={gridGameId} />
 
-      <QuestionGrid isEditing />
+      <QuestionGrid isEditing gridGameId={gridGameId} />
 
       <div className={styles.footer}>
         <Button

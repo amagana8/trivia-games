@@ -9,76 +9,79 @@ import { gridGameAtom } from '../../../atoms/gridGame';
 import { Column } from './Column/Column';
 import * as styles from './QuestionGrid.styles';
 
-export const QuestionGrid: React.FC<{ isEditing: boolean }> = memo(
-  ({ isEditing }) => {
-    const gridGame = useAtomValue(gridGameAtom);
-    const { moveQuestion, changeTitle, popColumn, pushColumn } =
-      useAtomInstance(gridGameAtom).exports;
+export const QuestionGrid: React.FC<{
+  isEditing?: boolean;
+  gridGameId: string;
+}> = memo(({ isEditing = false, gridGameId }) => {
+  const gridGame = useAtomValue(gridGameAtom, [gridGameId]);
+  const { moveQuestion, changeTitle, popColumn, pushColumn } = useAtomInstance(
+    gridGameAtom,
+    [gridGameId],
+  ).exports;
 
-    useEffect(() => {
-      return monitorForElements({
-        onDrop: ({ source, location }) => {
-          const origin = location.initial.dropTargets[0];
-          const destination = location.current.dropTargets[0];
+  useEffect(() => {
+    return monitorForElements({
+      onDrop: ({ source, location }) => {
+        const origin = location.initial.dropTargets[0];
+        const destination = location.current.dropTargets[0];
 
-          moveQuestion(
-            String(source.data.questionId),
-            origin
-              ? {
-                  categoryIndex: Number(origin.data.categoryIndex),
-                  questionIndex: Number(origin.data.questionIndex),
-                }
-              : undefined,
-            destination
-              ? {
-                  categoryIndex: Number(destination?.data.categoryIndex),
-                  questionIndex: Number(destination?.data.questionIndex),
-                }
-              : undefined,
-          );
-        },
-      });
-    }, []);
+        moveQuestion(
+          String(source.data.questionId),
+          origin
+            ? {
+                categoryIndex: Number(origin.data.categoryIndex),
+                questionIndex: Number(origin.data.questionIndex),
+              }
+            : undefined,
+          destination
+            ? {
+                categoryIndex: Number(destination?.data.categoryIndex),
+                questionIndex: Number(destination?.data.questionIndex),
+              }
+            : undefined,
+        );
+      },
+    });
+  }, []);
 
-    return (
-      <div className={styles.root}>
-        <div>
-          {isEditing ? (
-            <TextField
-              value={gridGame.title}
-              onChange={(e) => changeTitle(e.target.value)}
-              variant="standard"
-              placeholder="Title"
-            />
-          ) : (
-            <Typography variant="h3">Title</Typography>
-          )}
-
-          <div style={{ columnGap: '1rem', display: 'flex' }}>
-            {gridGame.grid.map(({ category, questions }, index) => (
-              <Column
-                key={index}
-                category={category}
-                questions={questions}
-                categoryIndex={index}
-                isEditing={isEditing}
-              />
-            ))}
-          </div>
-        </div>
-
-        {isEditing && (
-          <div className={styles.gridControls}>
-            <IconButton onClick={popColumn}>
-              <RemoveCircleOutlineIcon />
-            </IconButton>
-
-            <IconButton onClick={pushColumn}>
-              <AddCircleOutlineIcon />
-            </IconButton>
-          </div>
+  return (
+    <div className={styles.root}>
+      <div>
+        {isEditing ? (
+          <TextField
+            value={gridGame.title}
+            onChange={(e) => changeTitle(e.target.value)}
+            variant="standard"
+            placeholder="Title"
+          />
+        ) : (
+          <Typography variant="h3">Title</Typography>
         )}
+
+        <div style={{ columnGap: '1rem', display: 'flex' }}>
+          {gridGame.grid.map(({ category, questions }, index) => (
+            <Column
+              key={index}
+              category={category}
+              questions={questions}
+              categoryIndex={index}
+              isEditing={isEditing}
+            />
+          ))}
+        </div>
       </div>
-    );
-  },
-);
+
+      {isEditing && (
+        <div className={styles.gridControls}>
+          <IconButton onClick={popColumn}>
+            <RemoveCircleOutlineIcon />
+          </IconButton>
+
+          <IconButton onClick={pushColumn}>
+            <AddCircleOutlineIcon />
+          </IconButton>
+        </div>
+      )}
+    </div>
+  );
+});

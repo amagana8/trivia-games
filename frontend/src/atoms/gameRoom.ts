@@ -4,7 +4,12 @@ import { type GameRoomState, GameStatus } from '../../../bff/src/pb/gameRoom';
 import { trpc } from '../trpc';
 
 export const gameRoomAtom = atom('gameRoom', (gameRoomId: string) => {
-  const gameRoomSignal = injectSignal<GameRoomState>({
+  const gameRoomSignal = injectSignal<
+    GameRoomState,
+    {
+      gameStatusUpdate: GameStatus;
+    }
+  >({
     allowedPlayers: [],
     completedQuestions: [],
     currentPlayer: '',
@@ -28,6 +33,16 @@ export const gameRoomAtom = atom('gameRoom', (gameRoomId: string) => {
 
     return () => sub.unsubscribe();
   }, [gameRoomId]);
+
+  injectEffect(() => {
+    const cleanup = gameRoomSignal.on('change', ({ newState, oldState }) => {
+      if (newState.status !== oldState.status) {
+        gameRoomSignal.send('gameStatusUpdate', newState.status);
+      }
+    });
+
+    return cleanup;
+  }, []);
 
   return gameRoomSignal;
 });

@@ -1,4 +1,10 @@
-import { api, atom, injectPromise, injectSignal } from '@zedux/react';
+import {
+  api,
+  atom,
+  injectAtomInstance,
+  injectPromise,
+  injectSignal,
+} from '@zedux/react';
 import { produce } from 'immer';
 
 import { trpc } from '../trpc';
@@ -12,12 +18,17 @@ export const allGridGamesQueryAtom = atom('allGridGames', () => {
   return gridGamesPromise;
 });
 
-export const gridGameAtom = atom('gridGame', () => {
-  const gridGame = injectSignal({
-    grid: [{ category: '', questions: ['', '', '', '', ''] }],
-    gridGameId: '',
-    title: '',
-  });
+export const gridGameAtom = atom('gridGame', (gridGameId: string) => {
+  const queryAtom = injectAtomInstance(allGridGamesQueryAtom);
+  const initialGridGameState = queryAtom.get().data?.[gridGameId];
+
+  const gridGame = injectSignal(
+    initialGridGameState ?? {
+      grid: [{ category: '', questions: ['', '', '', '', ''] }],
+      gridGameId,
+      title: '',
+    },
+  );
 
   const editCategoryTitle = (categoryIndex: number, title: string) => {
     gridGame.set(
@@ -90,13 +101,15 @@ export const gridGameAtom = atom('gridGame', () => {
     );
   };
 
-  return api(gridGame).setExports({
-    changeTitle,
-    editCategoryTitle,
-    moveQuestion,
-    popColumn,
-    popQuestion,
-    pushColumn,
-    pushQuestion,
-  });
+  return api(gridGame)
+    .setExports({
+      changeTitle,
+      editCategoryTitle,
+      moveQuestion,
+      popColumn,
+      popQuestion,
+      pushColumn,
+      pushQuestion,
+    })
+    .setPromise(queryAtom.promise);
 });

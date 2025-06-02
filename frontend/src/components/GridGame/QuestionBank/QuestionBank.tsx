@@ -8,33 +8,37 @@ import { QuestionCard } from '../QuestionCard/QuestionCard';
 import * as styles from './QuestionBank.styles';
 import { QuestionDialog } from './QuestionDialog/QuestionDialog';
 
-export const QuestionBank: React.FC = memo(() => {
-  const availableQuestions = useAtomValue(availableQuestionsAtom);
-  const [isOpen, setIsOpen] = useState(false);
+export const QuestionBank: React.FC<{ gridGameId: string }> = memo(
+  ({ gridGameId }) => {
+    const availableQuestions = useAtomValue(availableQuestionsAtom, [
+      gridGameId,
+    ]);
+    const [isOpen, setIsOpen] = useState(false);
 
-  const closeDialog = useCallback(() => setIsOpen(false), []);
+    const closeDialog = useCallback(() => setIsOpen(false), []);
 
-  return (
-    <aside className={styles.sidebar}>
-      <Typography variant="h4">Questions</Typography>
+    return (
+      <aside className={styles.sidebar}>
+        <Typography variant="h4">Questions</Typography>
 
-      <div className={styles.list}>
-        <Suspense fallback={<div>Loading...</div>}>
-          {availableQuestions.map((questionId) => (
-            <QuestionCard questionId={questionId} key={questionId} />
-          ))}
-        </Suspense>
-      </div>
+        <div className={styles.list}>
+          <Suspense fallback={<div>Loading...</div>}>
+            {availableQuestions.map((questionId) => (
+              <QuestionCard questionId={questionId} key={questionId} />
+            ))}
+          </Suspense>
+        </div>
 
-      <Button
-        startIcon={<Add />}
-        variant="outlined"
-        onClick={() => setIsOpen(true)}
-      >
-        Question
-      </Button>
+        <Button
+          startIcon={<Add />}
+          variant="outlined"
+          onClick={() => setIsOpen(true)}
+        >
+          Question
+        </Button>
 
-      {isOpen && <QuestionDialog onClose={closeDialog} />}
-    </aside>
-  );
-});
+        {isOpen && <QuestionDialog onClose={closeDialog} />}
+      </aside>
+    );
+  },
+);

@@ -1,3 +1,4 @@
+import { GridGame } from '../../pb/gridGame.js';
 import {
   protectedProcedure,
   publicProcedure,
@@ -21,9 +22,16 @@ export const gridGameRouter = router({
   getGridGame: publicProcedure
     .input(gridGameValidator.pick({ gridGameId: true }))
     .query(({ input }) => gridGameService.getGridGame(input)),
-  getMyGridGames: protectedProcedure.query(({ ctx }) =>
-    gridGameService.getGridGamesByAuthorId({ authorId: ctx.userId }),
-  ),
+  getMyGridGames: protectedProcedure.query(async ({ ctx }) => {
+    const { gridGames } = await gridGameService.getGridGamesByAuthorId({
+      authorId: ctx.userId,
+    });
+
+    return gridGames.reduce<Record<string, GridGame>>((acc, gridGame) => {
+      acc[gridGame.gridGameId] = gridGame;
+      return acc;
+    }, {});
+  }),
   updateGridGame: protectedProcedure
     .input(gridGameInputValidator)
     .mutation(({ input, ctx }) =>
